@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="field-book-logo-v012.png">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="field-book-logo-v012.png">
-<title>Field Book — v0.0.18</title>
+<title>Field Book — v0.0.20</title>
 <style>
 :root{--ink:#17201d;--muted:#77807b;--paper:#fbfaf7;--line:#e5e2db;--accent:#2c6855;--accent2:#1e4d3e;--panel:#202824}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171d1a;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
@@ -46,17 +46,18 @@ padding:5px;box-shadow:0 10px 28px #0005;transform:translate(-50%,-100%);
 <svg viewBox="0 0 180 180" aria-hidden="true">
 <polygon points="55,75 82,90 82,78 126,103 126,116 88,94 88,108 55,88" fill="#fbfaf7"/>
 </svg>
-</div><h1>Field Book</h1><p class="lead">A clean digital field book for recording survey observations in the field.</p><button class="launch-btn primary" onclick="newJob()">Create New Job <span>→</span></button><button class="launch-btn" onclick="showJobs()">Job Storage <span>→</span></button><div class="version">FIELD BOOK v0.0.18</div></div></div></section>
+</div><h1>Field Book</h1><p class="lead">A clean digital field book for recording survey observations in the field.</p><button class="launch-btn primary" onclick="newJob()">Create New Job <span>→</span></button><button class="launch-btn" onclick="showJobs()">Job Storage <span>→</span></button><div class="version">FIELD BOOK v0.0.20</div></div></div></section>
 <section id="jobs" class="screen"><div class="topbar"><button onclick="home()">← Back</button><h2>Job Storage</h2><div class="top-spacer"></div></div><div class="jobs-content"><h1 class="jobs-title">Jobs</h1><p class="jobs-sub">Your field books and survey projects.</p><button class="new-job" onclick="newJob()">＋ Create New Job</button><div id="jobList"></div></div></section>
 <section id="book" class="screen"><div class="bookbar"><button onclick="showJobs()">Jobs</button><div class="center"><div class="jobid" id="toolbarJob"></div><div class="jobtitle" id="toolbarTitle"></div></div><button onclick="jobDetails()">Info</button></div><div class="canvas-wrap"><div class="paper" id="paper"><div class="paper-title"><strong id="paperTitle"></strong><span id="paperSite"></span></div><canvas id="drawCanvas"></canvas><div class="text-editor" id="textEditor"><input id="textInput" placeholder="Text…"><button onclick="placeText()">Add</button></div><div class="text-selection" id="textSelection"><button onclick="rotateSelected(-15)">↺</button><span>MOVE / ROTATE</span><button onclick="rotateSelected(15)">↻</button></div></div><div class="zoom-readout" id="zoomReadout"><button onclick="zoomOut()">−</button><span id="zoomValue">100%</span><button onclick="zoomIn()">＋</button><button onclick="resetZoom()">1:1</button></div><button class="tools-toggle" onclick="toggleTools()" aria-label="Drawing tools">✎</button><div class="tool-panel" id="toolPanel"><div class="tool-row"><button class="tool" data-tool="pen" onclick="setTool('pen')"><b>✎</b>Pen</button><button class="tool" data-tool="line" onclick="setTool('line')"><b>╱</b>Line</button><button class="tool" data-tool="arc" onclick="setTool('arc')"><b>⌒</b>Arc</button><button class="tool" data-tool="text" onclick="setTool('text')"><b>T</b>Text</button><button class="tool" data-tool="move" onclick="setTool('move')"><b>↔</b>Move</button><button class="tool" data-tool="eraser" onclick="setTool('eraser')"><b>⌫</b>Erase</button><button class="tool" onclick="undo()"><b>↶</b>Undo</button></div><div class="tool-wide"><button onclick="finishLine()">Finish line</button><button onclick="clearDrawing()">Clear</button><button onclick="toggleTools()">Done</button></div><div class="tool-help" id="toolHelp">Select a tool to start. Nothing is selected when the tools open.</div></div></div></section>
 <div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
 <script>
-const APP_VERSION='0.0.19',KEY='fieldBook.v006';let db=JSON.parse(localStorage.getItem(KEY)||'{"jobs":[],"active":null}');const $=id=>document.getElementById(id);let canvas,ctx,tool='none',drawing=false,start=null,current=null,preview=null,textPoint=null,lineStart=null,lineOrigin=null,lastLineTap=0,lastLinePoint=null,arcStart=null,arcEnd=null,selectedText=null,moveOffset=null;
+const APP_VERSION='0.0.20',KEY='fieldBook.v006';let db=JSON.parse(localStorage.getItem(KEY)||'{"jobs":[],"active":null}');const $=id=>document.getElementById(id);let canvas,ctx,tool='none',drawing=false,start=null,current=null,preview=null,textPoint=null,lineStart=null,lineOrigin=null,lastLineTap=0,lastLinePoint=null,arcStart=null,arcEnd=null,selectedText=null,moveOffset=null;
 let viewZoom=1,viewX=0,viewY=0,activePointers=new Map(),pinching=false,pinchStartDistance=0,pinchStartZoom=1,pinchWorldPoint=null;
 function save(){localStorage.setItem(KEY,JSON.stringify(db))}function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active')}function home(){show('home')}function showJobs(){renderJobs();show('jobs')}function nextJob(){let n=db.jobs.map(j=>parseInt(String(j.number).split('-').pop())).filter(Number.isFinite);return '26-'+String((Math.max(0,...n)+1)).padStart(4,'0')}function openModal(){$('modal').classList.add('show')}function closeModal(){$('modal').classList.remove('show')}
 function newJob(){$('dialog').innerHTML=`<h2>Create New Job</h2><div class="field"><label>JOB NUMBER</label><input id="jn" value="${nextJob()}"></div><div class="field"><label>JOB NAME</label><input id="jname" placeholder="Boundary Survey"></div><div class="field"><label>SITE / ADDRESS</label><input id="jsite" placeholder="Optional"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="createJob()">Create Job</button></div>`;openModal();setTimeout(()=>$('jname').focus(),50)}
 function createJob(){let j={id:uid(),number:$('jn').value.trim()||nextJob(),name:$('jname').value.trim()||'Untitled Survey',site:$('jsite').value.trim(),created:new Date().toISOString(),notes:[],drawing:[]};db.jobs.unshift(j);db.active=j.id;save();closeModal();openBook()}
-function renderJobs(){$('jobList').innerHTML=db.jobs.map(j=>`<article class="job"><div class="job-main"><div><div class="job-no">${esc(j.number)}</div><div class="job-name">${esc(j.name)}</div><div class="job-site">${esc(j.site||'No site entered')} · ${j.notes.length} note${j.notes.length===1?'':'s'}</div></div><button class="open-job" onclick="openBook('${j.id}')">Open →</button></div></article>`).join('')||'<div class="empty">No jobs stored yet.</div>'}function active(){return db.jobs.find(j=>j.id===db.active)}function openBook(id){if(id)db.active=id;save();viewZoom=1;viewX=0;viewY=0;show('book');setTimeout(initCanvas,30);renderBook()}function renderBook(){let j=active();if(!j)return home();$('toolbarJob').textContent=j.number;$('toolbarTitle').textContent=j.name;$('paperTitle').textContent=j.name;$('paperSite').textContent=j.site||'';resizeCanvas();drawAll()}
+function renderJobs(){$('jobList').innerHTML=db.jobs.map(j=>`<article class="job"><div class="job-main"><div><div class="job-no">${esc(j.number)}</div><div class="job-name">${esc(j.name)}</div><div class="job-site">${esc(j.site||'No site entered')} · ${j.notes.length} note${j.notes.length===1?'':'s'}</div></div><button class="open-job" onclick="openBook('${j.id}')">Open →</button></div></article>`).join('')||'<div class="empty">No jobs stored yet.</div>'}function active(){return db.jobs.find(j=>j.id===db.active)}function resetInteractionState(){tool='none';drawing=false;start=null;current=null;preview=null;textPoint=null;lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;arcStart=null;arcEnd=null;selectedText=null;moveOffset=null;hideTextSelection();if($('textEditor'))$('textEditor').style.display='none';document.querySelectorAll('.tool[data-tool]').forEach(b=>b.classList.remove('active'));if($('toolHelp'))$('toolHelp').textContent='Select a tool to start. Nothing is selected when the tools open.'}
+function openBook(id){if(id)db.active=id;save();resetInteractionState();viewZoom=1;viewX=0;viewY=0;show('book');setTimeout(initCanvas,30);renderBook()}function renderBook(){let j=active();if(!j)return home();$('toolbarJob').textContent=j.number;$('toolbarTitle').textContent=j.name;$('paperTitle').textContent=j.name;$('paperSite').textContent=j.site||'';resizeCanvas();drawAll()}
 function initCanvas(){canvas=$('drawCanvas');ctx=canvas.getContext('2d');resetZoom();resizeCanvas();drawAll();canvas.onpointerdown=handlePointerDown;canvas.onpointermove=handlePointerMove;canvas.onpointerup=handlePointerUp;canvas.onpointercancel=handlePointerCancel}
 function resizeCanvas(){if(!canvas)return;let r=canvas.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);drawAll()}window.addEventListener('resize',()=>{if($('book').classList.contains('active'))resizeCanvas()})
 
@@ -128,7 +129,10 @@ function handlePointerCancel(e){
  activePointers.delete(e.pointerId);
  pinching=false;
  drawing=false;preview=null;
- pointerUp(e);
+ start=null;current=null;
+ if(tool==='arc'){arcStart=null;arcEnd=null}
+ if(tool==='move'){moveOffset=null}
+ drawAll();
 }
 function point(e){
  let r=canvas.getBoundingClientRect();
@@ -241,7 +245,12 @@ function pointerDown(e){
    const j=active();
 
    if(isDouble){
-     j.drawing.push({type:'line',x1:lineStart.x,y1:lineStart.y,x2:p.x,y2:p.y});
+     // A double-tap on the current endpoint is a finish gesture, not another
+     // zero-length segment. If the second tap is somewhere else, add that
+     // segment first, then close from the new endpoint back to A.
+     if(Math.hypot(p.x-lineStart.x,p.y-lineStart.y)>1){
+       j.drawing.push({type:'line',x1:lineStart.x,y1:lineStart.y,x2:p.x,y2:p.y});
+     }
      if(Math.hypot(p.x-lineOrigin.x,p.y-lineOrigin.y)>1){
        j.drawing.push({type:'line',x1:p.x,y1:p.y,x2:lineOrigin.x,y2:lineOrigin.y});
      }
@@ -337,42 +346,68 @@ function pointToSegmentDistance(p,a,b){
  let t=((p.x-a.x)*dx+(p.y-a.y)*dy)/len2;t=Math.max(0,Math.min(1,t));
  return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));
 }
-function undo(){let j=active();if(!j)return;
- // Undo must also cancel any in-progress line state. Otherwise the next line
- // can inherit the endpoint/origin from the segment that was just undone.
+function cancelTransient(){
+ drawing=false;start=null;current=null;preview=null;textPoint=null;
+ lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;
+ arcStart=null;arcEnd=null;moveOffset=null;
+ $('textEditor').style.display='none';hideTextSelection();
+ drawAll();
+}
+function undo(){
+ const j=active();if(!j)return;
+ // For a polyline, undo removes the most recently committed segment and
+ // completely resets its construction state so the next line starts fresh.
  if(tool==='line'){
    if(j.drawing?.length)j.drawing.pop();
    lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;
    save();drawAll();return;
  }
- j.drawing.pop();save();drawAll()}
-function clearDrawing(){if(confirm('Clear the field sketch?')){let j=active();j.drawing=[];lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;arcStart=null;arcEnd=null;selectedText=null;hideTextSelection();save();drawAll()}}
-function finishLine(){if(tool==='line'){lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;drawAll()}}
+ // If an arc is being constructed, undo cancels the unfinished arc instead
+ // of deleting an already completed item.
+ if(tool==='arc'&&(arcStart||arcEnd)){cancelTransient();return}
+ if(j.drawing?.length)j.drawing.pop();
+ selectedText=null;hideTextSelection();save();drawAll();
+}
+function clearDrawing(){
+ if(confirm('Clear the field sketch?')){
+   let j=active();j.drawing=[];resetInteractionState();save();drawAll();
+ }
+}
+function finishLine(){
+ if(tool==='line'){
+   lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;
+   drawAll();
+ }
+}
 function toggleTools(){
  const panel=$('toolPanel');panel.classList.toggle('open');
- if(!panel.classList.contains('open')){lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;drawAll()}
+ if(!panel.classList.contains('open')){
+   // Closing the tray cancels an unfinished line construction, preventing a
+   // later line from inheriting stale endpoints. Completed geometry remains.
+   lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;
+   drawAll();
+ }
 }
 function setTool(t){
- if(tool==='line'&&t!=='line')lineStart=null;
+ // Changing tools always clears transient construction state, but never clears
+ // completed drawing objects.
+ drawing=false;start=null;current=null;preview=null;lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;arcStart=null;arcEnd=null;moveOffset=null;
  tool=t;
  document.querySelectorAll('.tool[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));
  $('textEditor').style.display='none';
  const help={
    none:'Select a tool to start. Nothing is selected when the tools open.',
-   pen:'Draw freehand directly on the field page.',
-   line:'Tap A, then tap each next point. Double-tap the last point to close back to A.',
-   arc:'Tap the start, tap the end, then drag the middle out to set the radius.',
-   text:'Tap anywhere on the page to place a text label.',
-   move:'Tap a text label, then drag it. Use ↺ / ↻ to rotate it.',
+   pen:'Draw freehand directly on the field page. Release to commit the stroke.',
+   line:'Tap A, then each next point. Double-tap the current endpoint to close back to A.',
+   arc:'Tap the start, tap the end, then drag the middle point to set the curve.',
+   text:'Tap anywhere on the page, enter a label, then press Add or Enter.',
+   move:'Tap a text label, drag it to move it, then use ↺ / ↻ to rotate it.',
    eraser:'Tap or drag over a drawing to erase it.'
  };
  $('toolHelp').textContent=help[t]||help.none;
-
- // Selecting a tool is the action; close the tool tray immediately.
  $('toolPanel').classList.remove('open');
  if(t!=='move'){selectedText=null;hideTextSelection();}
-
- if(t!=='line')drawAll();
+ drawAll();
 }
 function openTextEditor(p){textPoint=p;let ed=$('textEditor');ed.style.left=Math.min(p.x,canvas.clientWidth-220)+'px';ed.style.top=Math.min(p.y,canvas.clientHeight-55)+'px';ed.style.display='flex';$('textInput').value='';setTimeout(()=>$('textInput').focus(),20)}
 function placeText(){let v=$('textInput').value.trim();if(!v)return;let j=active();j.drawing.push({type:'text',text:v,x:textPoint.x,y:textPoint.y,rotation:0});save();$('textEditor').style.display='none';drawAll()}$('textInput').addEventListener('keydown',e=>{if(e.key==='Enter')placeText();if(e.key==='Escape')$('textEditor').style.display='none'})
