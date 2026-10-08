@@ -1,16 +1,25 @@
-# Field Book v0.0.17
+# Field Book v0.0.18
 
-Touch/zoom usability release.
+Zoom bug-fix release.
 
-## Zoom
-- Disabled iOS/browser page-level zoom so taps are no longer interpreted as accidental page zooms.
-- Field Book now uses its own two-finger pinch-to-zoom gesture.
-- Single-finger taps remain available for drawing tools.
-- Zoom range is 65%–300%.
-- A small zoom control appears while zoomed, with minus, percentage, plus, and 1:1 reset.
-- Zoom resets to 1:1 when opening a job.
+v0.0.17 mixed zoom handling directly into the field-tool pointer handlers, which interfered with the drawing tools.
 
-The existing line, arc, text/move and job functionality from v0.0.16 is retained.
+v0.0.18 starts from the last known working v0.0.16 tool implementation and adds zoom as a separate gesture layer.
 
-## Update system
-Keeps the v0.0.14+ version-check/service-worker update mechanism.
+### Zoom
+- Browser/iOS page zoom disabled.
+- Two-finger pinch zooms the entire field page.
+- Single-finger input is passed directly to the existing field tools.
+- 65%–300% zoom.
+- Zoom controls appear when zoomed.
+- 1:1 resets the view.
+- Opening a job resets zoom.
+
+### Tools
+The v0.0.16 field tools are retained unchanged:
+- polyline line tool
+- double-tap close
+- arc start/end/radius workflow
+- text move/rotate
+- eraser
+- pen
