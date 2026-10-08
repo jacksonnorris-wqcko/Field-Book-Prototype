@@ -3,6 +3,5 @@
 <rect x="116" y="78" width="280" height="356" rx="18" fill="#fbfaf7"/>
 <rect x="116" y="78" width="280" height="12" fill="#2c6855"/>
 <path d="M155 170h202M155 225h202M155 280h202M155 335h145" stroke="#d8d5ce" stroke-width="12" stroke-linecap="round"/>
-<circle cx="155" cy="170" r="6" fill="#2c6855"/>
-<circle cx="155" cy="225" r="6" fill="#2c6855"/>
+<path d="M165 365l55-55 48 28 64-83" fill="none" stroke="#2c6855" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

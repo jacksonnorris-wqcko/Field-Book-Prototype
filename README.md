@@ -1,35 +1,39 @@
-# Field Book v0.0.5
+# Field Book v0.0.6
 
-Premium mobile-first digital survey field book prototype.
+Digital survey field-book prototype.
 
-## Files
+## v0.0.6 focus
 
-- `index.html` — app
-- `manifest.json` — PWA configuration
-- `sw.js` — offline storage and automatic update system
-- `icon.svg` — app icon
-- `README.md` — setup notes
+The field page is now intentionally open and uncluttered.
+
+A compact **Tools** control exposes:
+- Pen / freehand
+- Straight line
+- Arc
+- Text
+- Eraser
+- Undo
+- Clear page
+
+Drawings are stored with each local job.
 
 ## GitHub Pages
 
-Upload/replace all files in the repository with these files, then allow GitHub Pages a moment to publish.
+Replace the complete contents of the repository with these files, then allow GitHub Pages to publish.
 
-Open the GitHub Pages address on the phone and add it to the Home Screen.
+Open the GitHub Pages address and add it to the Home Screen.
 
-## Automatic updates
+## Updates
 
-v0.0.5 uses:
-- service-worker `updateViaCache: "none"`
-- explicit `registration.update()`
-- versioned service-worker cache
-- deletion of old Field Book caches
+The PWA uses:
+- versioned service-worker caches
+- `updateViaCache: "none"`
+- explicit service-worker update checks
 - network-first navigation
-- network-first app assets
-- automatic activation of waiting workers
-- automatic page reload after a new worker takes control
-
-Future releases should bump the `VERSION` in `sw.js`, the `APP_VERSION` in `index.html`, and the visible version text.
+- old-cache cleanup
+- automatic activation
+- automatic reload after the new worker takes control
 
 ## Data
 
-This prototype stores jobs locally in the browser/device. Cloud sync and server integration are not yet implemented.
+Jobs and field sketches are currently stored locally on the device/browser. Cloud sync is not yet implemented.
