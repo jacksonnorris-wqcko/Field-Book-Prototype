@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="field-book-logo-v012.png">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="field-book-logo-v012.png">
-<title>Field Book — v0.0.13</title>
+<title>Field Book — v0.0.14</title>
 <style>
 :root{--ink:#17201d;--muted:#77807b;--paper:#fbfaf7;--line:#e5e2db;--accent:#2c6855;--accent2:#1e4d3e;--panel:#202824}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171d1a;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
@@ -30,12 +30,12 @@ button,input{font:inherit}button{cursor:pointer}.screen{display:none;width:100%;
 <svg viewBox="0 0 180 180" aria-hidden="true">
 <polygon points="55,75 82,90 82,78 126,103 126,116 88,94 88,108 55,88" fill="#fbfaf7"/>
 </svg>
-</div><h1>Field Book</h1><p class="lead">A clean digital field book for recording survey observations in the field.</p><button class="launch-btn primary" onclick="newJob()">Create New Job <span>→</span></button><button class="launch-btn" onclick="showJobs()">Job Storage <span>→</span></button><div class="version">FIELD BOOK v0.0.13</div></div></div></section>
+</div><h1>Field Book</h1><p class="lead">A clean digital field book for recording survey observations in the field.</p><button class="launch-btn primary" onclick="newJob()">Create New Job <span>→</span></button><button class="launch-btn" onclick="showJobs()">Job Storage <span>→</span></button><div class="version">FIELD BOOK v0.0.14</div></div></div></section>
 <section id="jobs" class="screen"><div class="topbar"><button onclick="home()">← Back</button><h2>Job Storage</h2><div class="top-spacer"></div></div><div class="jobs-content"><h1 class="jobs-title">Jobs</h1><p class="jobs-sub">Your field books and survey projects.</p><button class="new-job" onclick="newJob()">＋ Create New Job</button><div id="jobList"></div></div></section>
 <section id="book" class="screen"><div class="bookbar"><button onclick="showJobs()">Jobs</button><div class="center"><div class="jobid" id="toolbarJob"></div><div class="jobtitle" id="toolbarTitle"></div></div><button onclick="jobDetails()">Info</button></div><div class="canvas-wrap"><div class="paper" id="paper"><div class="paper-title"><strong id="paperTitle"></strong><span id="paperSite"></span></div><canvas id="drawCanvas"></canvas><div class="text-editor" id="textEditor"><input id="textInput" placeholder="Text…"><button onclick="placeText()">Add</button></div></div><button class="tools-toggle" onclick="toggleTools()" aria-label="Drawing tools">✎</button><div class="tool-panel" id="toolPanel"><div class="tool-row"><button class="tool" data-tool="pen" onclick="setTool('pen')"><b>✎</b>Pen</button><button class="tool" data-tool="line" onclick="setTool('line')"><b>╱</b>Line</button><button class="tool" data-tool="arc" onclick="setTool('arc')"><b>⌒</b>Arc</button><button class="tool" data-tool="text" onclick="setTool('text')"><b>T</b>Text</button><button class="tool" data-tool="eraser" onclick="setTool('eraser')"><b>⌫</b>Erase</button><button class="tool" onclick="undo()"><b>↶</b>Undo</button></div><div class="tool-wide"><button onclick="finishLine()">Finish line</button><button onclick="clearDrawing()">Clear</button><button onclick="toggleTools()">Done</button></div><div class="tool-help" id="toolHelp">Select a tool to start. Nothing is selected when the tools open.</div></div></div></section>
 <div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
 <script>
-const APP_VERSION='0.0.13',KEY='fieldBook.v006';let db=JSON.parse(localStorage.getItem(KEY)||'{"jobs":[],"active":null}');const $=id=>document.getElementById(id);let canvas,ctx,tool='none',drawing=false,start=null,current=null,preview=null,textPoint=null,lineStart=null;
+const APP_VERSION='0.0.14',KEY='fieldBook.v006';let db=JSON.parse(localStorage.getItem(KEY)||'{"jobs":[],"active":null}');const $=id=>document.getElementById(id);let canvas,ctx,tool='none',drawing=false,start=null,current=null,preview=null,textPoint=null,lineStart=null,lineOrigin=null,lastLineTap=0,lastLinePoint=null;
 function save(){localStorage.setItem(KEY,JSON.stringify(db))}function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active')}function home(){show('home')}function showJobs(){renderJobs();show('jobs')}function nextJob(){let n=db.jobs.map(j=>parseInt(String(j.number).split('-').pop())).filter(Number.isFinite);return '26-'+String((Math.max(0,...n)+1)).padStart(4,'0')}function openModal(){$('modal').classList.add('show')}function closeModal(){$('modal').classList.remove('show')}
 function newJob(){$('dialog').innerHTML=`<h2>Create New Job</h2><div class="field"><label>JOB NUMBER</label><input id="jn" value="${nextJob()}"></div><div class="field"><label>JOB NAME</label><input id="jname" placeholder="Boundary Survey"></div><div class="field"><label>SITE / ADDRESS</label><input id="jsite" placeholder="Optional"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="createJob()">Create Job</button></div>`;openModal();setTimeout(()=>$('jname').focus(),50)}
 function createJob(){let j={id:uid(),number:$('jn').value.trim()||nextJob(),name:$('jname').value.trim()||'Untitled Survey',site:$('jsite').value.trim(),created:new Date().toISOString(),notes:[],drawing:[]};db.jobs.unshift(j);db.active=j.id;save();closeModal();openBook()}
@@ -50,16 +50,43 @@ function pointerDown(e){
  if(tool==='none')return;
  if(tool==='text'){textPoint=p;openTextEditor(p);return}
  if(tool==='line'){
+   const now=Date.now();
+   const isDouble=(now-lastLineTap<360 && lastLinePoint &&
+      Math.hypot(p.x-lastLinePoint.x,p.y-lastLinePoint.y)<28);
+
    if(!lineStart){
      lineStart=p;
+     lineOrigin={x:p.x,y:p.y};
+     lastLineTap=now;
+     lastLinePoint={x:p.x,y:p.y};
      drawAll({type:'line',x1:p.x,y1:p.y,x2:p.x,y2:p.y});
-   }else{
-     const j=active();
+     return;
+   }
+
+   const j=active();
+
+   // A double-tap finishes the current segment and closes the
+   // polyline back to its original starting point.
+   if(isDouble){
      j.drawing.push({type:'line',x1:lineStart.x,y1:lineStart.y,x2:p.x,y2:p.y});
-     lineStart=p;
+     if(Math.hypot(p.x-lineOrigin.x,p.y-lineOrigin.y)>1){
+       j.drawing.push({type:'line',x1:p.x,y1:p.y,x2:lineOrigin.x,y2:lineOrigin.y});
+     }
+     lineStart=null;
+     lineOrigin=null;
+     lastLineTap=0;
+     lastLinePoint=null;
      save();
      drawAll();
+     return;
    }
+
+   j.drawing.push({type:'line',x1:lineStart.x,y1:lineStart.y,x2:p.x,y2:p.y});
+   lineStart=p;
+   lastLineTap=now;
+   lastLinePoint={x:p.x,y:p.y};
+   save();
+   drawAll();
    return;
  }
  drawing=true;start=p;current=p;
@@ -104,11 +131,11 @@ function pointToSegmentDistance(p,a,b){
  return Math.hypot(p.x-(a.x+t*dx),p.y-(a.y+t*dy));
 }
 function undo(){let j=active();if(!j)return;j.drawing.pop();save();drawAll()}
-function clearDrawing(){if(confirm('Clear the field sketch?')){let j=active();j.drawing=[];lineStart=null;save();drawAll()}}
-function finishLine(){if(tool==='line'){lineStart=null;drawAll()}}
+function clearDrawing(){if(confirm('Clear the field sketch?')){let j=active();j.drawing=[];lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;save();drawAll()}}
+function finishLine(){if(tool==='line'){lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;drawAll()}}
 function toggleTools(){
  const panel=$('toolPanel');panel.classList.toggle('open');
- if(!panel.classList.contains('open')){lineStart=null;drawAll()}
+ if(!panel.classList.contains('open')){lineStart=null;lineOrigin=null;lastLineTap=0;lastLinePoint=null;drawAll()}
 }
 function setTool(t){
  if(tool==='line'&&t!=='line')lineStart=null;
@@ -118,19 +145,65 @@ function setTool(t){
  const help={
    none:'Select a tool to start. Nothing is selected when the tools open.',
    pen:'Draw freehand directly on the field page.',
-   line:'Tap point A, tap point B, then tap point C to continue the line. Finish when done.',
+   line:'Tap A, tap B, then keep tapping to continue. Double-tap to close back to A.',
    arc:'Press and drag to draw a curved field-book arc.',
    text:'Tap anywhere on the page to place a text label.',
    eraser:'Tap or drag over a drawing to erase it.'
  };
  $('toolHelp').textContent=help[t]||help.none;
+
+ // Selecting a tool is the action; close the tool tray immediately.
+ $('toolPanel').classList.remove('open');
+
  if(t!=='line')drawAll();
 }
 function openTextEditor(p){textPoint=p;let ed=$('textEditor');ed.style.left=Math.min(p.x,canvas.clientWidth-220)+'px';ed.style.top=Math.min(p.y,canvas.clientHeight-55)+'px';ed.style.display='flex';$('textInput').value='';setTimeout(()=>$('textInput').focus(),20)}
 function placeText(){let v=$('textInput').value.trim();if(!v)return;let j=active();j.drawing.push({type:'text',text:v,x:textPoint.x,y:textPoint.y});save();$('textEditor').style.display='none';drawAll()}$('textInput').addEventListener('keydown',e=>{if(e.key==='Enter')placeText();if(e.key==='Escape')$('textEditor').style.display='none'})
 function jobDetails(){let j=active();$('dialog').innerHTML=`<h2>Job Information</h2><div class="field"><label>JOB NUMBER</label><input value="${esc(j.number)}" disabled></div><div class="field"><label>JOB NAME</label><input id="dn" value="${esc(j.name)}"></div><div class="field"><label>SITE / ADDRESS</label><input id="ds" value="${esc(j.site)}"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveDetails()">Save</button></div>`;openModal()}function saveDetails(){let j=active();j.name=$('dn').value.trim()||'Untitled Survey';j.site=$('ds').value.trim();save();closeModal();renderBook()}$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});renderJobs();
-async function checkForUpdate(){if(!('serviceWorker'in navigator))return;try{let reg=await navigator.serviceWorker.register('./sw.js?v='+APP_VERSION,{updateViaCache:'none'});await reg.update();if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'})}catch(e){}}
-navigator.serviceWorker?.addEventListener('controllerchange',()=>{if(!sessionStorage.getItem('fieldBookReloaded')){sessionStorage.setItem('fieldBookReloaded','1');location.reload()}});checkForUpdate();
+let updateReloading=false;
+async function applyServiceWorkerUpdate(reg){
+  if(reg.waiting){
+    reg.waiting.postMessage({type:'SKIP_WAITING'});
+    return true;
+  }
+  return false;
+}
+async function checkForUpdate(){
+  if(!('serviceWorker' in navigator))return;
+  try{
+    // First ask the server for the current release, bypassing browser/CDN caches.
+    const r=await fetch('./version.json?ts='+Date.now(),{cache:'no-store'});
+    const remote=await r.json();
+
+    if(remote.version && remote.version!==APP_VERSION){
+      // A newer HTML is live. Ask the active worker to refresh its navigation
+      // from the network, then reload into the new release.
+      const reg=await navigator.serviceWorker.getRegistration();
+      if(reg) await reg.update();
+      if(reg?.waiting){
+        reg.waiting.postMessage({type:'SKIP_WAITING'});
+      }else{
+        updateReloading=true;
+        location.reload();
+      }
+      return;
+    }
+
+    const reg=await navigator.serviceWorker.register('./sw.js?release='+APP_VERSION,{updateViaCache:'none'});
+    await reg.update();
+    await applyServiceWorkerUpdate(reg);
+  }catch(e){
+    // Offline/first-run: the normal cached app continues to work.
+  }
+}
+navigator.serviceWorker?.addEventListener('controllerchange',()=>{
+  if(updateReloading || !sessionStorage.getItem('fieldBookReloaded')){
+    sessionStorage.setItem('fieldBookReloaded','1');
+    location.reload();
+  }
+});
+checkForUpdate();
+setInterval(checkForUpdate,60000);
 </script>
 </body>
 </html>
