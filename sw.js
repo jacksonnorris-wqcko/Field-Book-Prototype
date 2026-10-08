@@ -1,60 +1,60 @@
-const CACHE='field-book-v0.0.3';
-const CORE=['./','./index.html','./manifest.json','./icon.svg'];
+/*
+ Field Book service worker
+ v0.0.4 — update-safe PWA
+*/
+const VERSION = 'field-book-v0.0.4';
+const SHELL = ['./', './index.html', './manifest.json', './icon.svg'];
 
-self.addEventListener('install',event=>{
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE)
-      .then(cache=>cache.addAll(CORE))
-      .then(()=>self.skipWaiting())
+    caches.open(VERSION)
+      .then(cache => cache.addAll(SHELL))
+      .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate',event=>{
+self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys=>Promise.all(
-        keys.filter(key=>key.startsWith('field-book-') && key!==CACHE)
-            .map(key=>caches.delete(key))
+      .then(keys => Promise.all(
+        keys.filter(key => key !== VERSION).map(key => caches.delete(key))
       ))
-      .then(()=>self.clients.claim())
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch',event=>{
-  if(event.request.method!=='GET') return;
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
+});
 
-  const url=new URL(event.request.url);
+self.addEventListener('fetch', event => {
+  const request = event.request;
 
-  // Always prefer the newest HTML from GitHub Pages.
-  if(event.request.mode==='navigate' || url.pathname.endsWith('/index.html')){
+  // Always ask the network for the HTML shell. This is the important part
+  // for installed PWAs: a refresh gets the newest GitHub Pages index.html.
+  if (request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request,{cache:'no-store'})
-        .then(response=>{
-          const copy=response.clone();
-          caches.open(CACHE).then(cache=>cache.put('./index.html',copy));
+      fetch(new Request(request, { cache: 'no-store' }))
+        .then(response => {
+          const copy = response.clone();
+          caches.open(VERSION).then(cache => cache.put('./index.html', copy));
           return response;
         })
-        .catch(()=>caches.match('./index.html'))
+        .catch(() => caches.match('./index.html'))
     );
     return;
   }
 
-  // For other local assets, use cache immediately while refreshing in background.
+  // Network-first for app assets, with an offline cache fallback.
   event.respondWith(
-    caches.match(event.request).then(cached=>{
-      const network=fetch(event.request).then(response=>{
-        if(response.ok){
-          const copy=response.clone();
-          caches.open(CACHE).then(cache=>cache.put(event.request,copy));
+    fetch(new Request(request, { cache: 'no-store' }))
+      .then(response => {
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(VERSION).then(cache => cache.put(request, copy));
         }
         return response;
-      }).catch(()=>cached);
-      return cached || network;
-    })
+      })
+      .catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
   );
-});
-
-// Tell every open Field Book window to activate a newly downloaded worker.
-self.addEventListener('message',event=>{
-  if(event.data==='SKIP_WAITING') self.skipWaiting();
 });

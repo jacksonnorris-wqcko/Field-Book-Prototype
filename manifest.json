@@ -3,8 +3,8 @@
   "short_name": "Field Book",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#d9d4c6",
-  "theme_color": "#252525",
-  "description": "Digital survey field book.",
-  "version": "0.0.3"
+  "background_color": "#d9d8d1",
+  "theme_color": "#18211f",
+  "description": "Premium digital survey field book prototype.",
+  "scope": "./"
 }

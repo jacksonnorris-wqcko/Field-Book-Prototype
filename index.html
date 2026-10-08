@@ -9,54 +9,71 @@
 <meta name="apple-mobile-web-app-title" content="Field Book">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
-<meta name="field-book-version" content="0.0.3"><title>Field Book</title>
+<title>Field Book</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 *{box-sizing:border-box}
-:root{--paper:#f7f2e3;--paper2:#eee7d2;--ink:#252525;--muted:#777266;--line:#c9c0aa;--blue:#274c77;--red:#a43d32}
-html,body{margin:0;height:100%;background:#d9d4c6;color:var(--ink);font-family:Georgia,"Times New Roman",serif}
-button,input{font:inherit}
-button{cursor:pointer}
+:root{--ink:#17201f;--ink2:#26302e;--cream:#f4f0e6;--paper:#fbf9f3;--paperline:#d9d4c7;--muted:#7c817c;--sage:#657a6c;--sage2:#496052;--brass:#aa9364;--edge:#d8d3c7;--white:#fffdf8}
+html,body{margin:0;height:100%;background:#d9d8d1;color:var(--ink);font-family:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input{font:inherit}button{cursor:pointer}
 .app{min-height:100%;display:flex;flex-direction:column}
 .screen{display:none;min-height:100vh}.screen.active{display:flex}
-#home{align-items:center;justify-content:center;padding:25px;background:#e1ddcf}
-.cover{width:min(470px,94vw);background:var(--paper);border:1px solid #bcb4a1;box-shadow:0 12px 35px #0002;padding:42px 28px}
-.cover:before{content:"";display:block;height:5px;background:var(--red);margin:-42px -28px 34px}
-.title{font-size:42px;letter-spacing:-1px;margin:0 0 5px}.subtitle{font-size:15px;color:var(--muted);margin:0 0 36px;font-style:italic}
-.cover-btn{display:block;width:100%;padding:17px 15px;margin:11px 0;background:transparent;border:1px solid #aaa18d;text-align:left;color:var(--ink);font-weight:bold}
-.cover-btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.cover-footer{margin-top:40px;font-size:11px;color:#928c7e;text-align:center;letter-spacing:1px;text-transform:uppercase}
-#jobs{background:#eeeae0;flex-direction:column}
-.jobs-head{padding:20px max(18px,calc((100% - 720px)/2));border-bottom:1px solid #c8c1b3;background:#e8e3d7}
-.jobs-head h1{margin:0;font-size:28px}.jobs-head p{margin:5px 0 0;color:var(--muted)}
-.jobs-body{width:min(720px,100%);margin:auto;padding:18px}
-.newjob{width:100%;padding:14px;background:var(--ink);color:var(--paper);border:0;font-weight:bold;margin-bottom:16px}
-.job{background:var(--paper);border:1px solid #c6bead;padding:15px;margin-bottom:9px;box-shadow:0 2px 4px #0001}
-.job strong{font-size:17px}.job small{display:block;color:var(--muted);margin-top:4px}.job button{margin-top:10px;border:1px solid #aaa18e;background:transparent;padding:8px 12px}
-.back{border:0;background:transparent;padding:0;margin-bottom:12px;color:var(--muted)}
-#book{background:#c8c2b4;flex-direction:column}
-.book-toolbar{height:52px;flex:none;background:#252525;color:#eee;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-family:Arial,sans-serif}
-.toolbtn{background:transparent;border:0;color:#fff;padding:9px 10px}.joblabel{font-size:13px;letter-spacing:.3px}.book-wrap{flex:1;display:flex;justify-content:center;overflow:auto;padding:0}
-.page{position:relative;width:min(900px,100%);min-height:calc(100vh - 52px);background:var(--paper);box-shadow:0 0 18px #0003;padding:30px 28px 80px 70px;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,#b8c4ca 32px,#b8c4ca 33px)}
-.page:before{content:"";position:absolute;left:48px;top:0;bottom:0;border-left:2px solid #c17a6e;opacity:.75}
-.book-meta{font-size:13px;margin-bottom:18px;line-height:1.45;position:relative}.book-meta strong{font-size:20px}
-.notes{position:relative}.note{min-height:33px;border-bottom:0;padding:5px 2px;display:flex;gap:12px;align-items:flex-start}.note-no{width:30px;text-align:right;color:#9a9181;font-size:11px;padding-top:3px}.note-text{font-size:16px;line-height:23px;white-space:pre-wrap}.note-type{font:10px Arial,sans-serif;color:#8d877c;margin-left:auto;padding-top:4px}
-.empty-note{color:#aaa18f;font-style:italic;padding:20px 0}
-.addbar{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:min(540px,calc(100% - 30px));display:flex;gap:8px;z-index:5}
-.addbar button{flex:1;padding:13px;border:1px solid #777064;background:#292929;color:#fff;box-shadow:0 4px 10px #0003}
-.modal{display:none;position:fixed;inset:0;background:#0007;z-index:20;align-items:center;justify-content:center;padding:15px;font-family:Arial,sans-serif}.modal.show{display:flex}
-.dialog{width:min(480px,100%);background:var(--paper);padding:22px;box-shadow:0 12px 35px #0006}.dialog h2{margin:0 0 18px;font-family:Georgia,serif}.field{margin:12px 0}.field label{display:block;font-size:11px;font-weight:bold;color:var(--muted);margin-bottom:5px}.field input{width:100%;padding:11px;border:1px solid #aaa18d;background:#fffdf7}.actions{display:flex;gap:8px;margin-top:20px}.actions button{flex:1;padding:12px;border:1px solid #aaa18d;background:transparent}.actions .save{background:var(--ink);color:#fff;border-color:var(--ink)}
-@media(max-width:600px){.page{padding-left:55px;padding-right:16px}.page:before{left:37px}.book-toolbar{height:48px}.page{min-height:calc(100vh - 48px)}.title{font-size:37px}}
+
+/* COVER */
+#home{align-items:center;justify-content:center;padding:24px;background:
+radial-gradient(circle at 15% 15%,#fff9 0,transparent 28%),
+linear-gradient(135deg,#d9dbd4,#c9cec6)}
+.cover{position:relative;width:min(500px,94vw);min-height:620px;background:var(--ink);color:#f4f0e6;border-radius:5px;box-shadow:0 28px 60px #18201e33,0 4px 12px #18201e22;padding:54px 44px;overflow:hidden}
+.cover:before{content:"";position:absolute;left:0;top:0;bottom:0;width:9px;background:linear-gradient(#a99363,#766543)}
+.cover:after{content:"";position:absolute;inset:20px;border:1px solid #ffffff18;pointer-events:none}
+.brandmark{display:flex;align-items:center;gap:11px;margin-bottom:76px;font:500 11px "DM Mono",monospace;letter-spacing:2.2px;text-transform:uppercase;color:#cfc8b7}
+.branddot{width:8px;height:8px;border-radius:50%;background:var(--brass);box-shadow:0 0 0 5px #aa93641a}
+.title{font-size:52px;line-height:.98;letter-spacing:-2.7px;margin:0 0 12px;font-weight:700}.subtitle{font-size:15px;line-height:1.6;color:#b7bcb5;margin:0 0 48px;max-width:300px}
+.cover-btn{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;padding:17px 18px;margin:10px 0;background:#ffffff09;border:1px solid #ffffff18;border-radius:3px;color:#f5f1e7;text-align:left;font-weight:700;transition:.18s}
+.cover-btn span{font:500 11px "DM Mono",monospace;color:#929b93}.cover-btn:hover{background:#ffffff12;border-color:#aa936455}.cover-btn.primary{background:#e8e2d2;color:var(--ink);border-color:#e8e2d2}.cover-footer{position:absolute;bottom:40px;left:44px;font:500 9px "DM Mono",monospace;letter-spacing:1.5px;color:#737a73}
+
+/* JOBS */
+#jobs{background:#eef0eb;flex-direction:column}
+.jobs-head{padding:24px max(22px,calc((100% - 780px)/2));border-bottom:1px solid #d5d9d2;background:#f4f5f1}
+.jobs-head h1{margin:0;font-size:31px;letter-spacing:-1px}.jobs-head p{margin:6px 0 0;color:var(--muted);font-size:13px}.back{border:0;background:none;padding:0;margin-bottom:18px;color:#69716c;font-size:12px;font-weight:700}
+.jobs-body{width:min(780px,100%);margin:auto;padding:22px}.newjob{width:100%;padding:15px;background:var(--sage2);color:#fff;border:0;border-radius:4px;font-weight:700;letter-spacing:.2px;margin-bottom:18px;box-shadow:0 5px 14px #49605220}
+.job{position:relative;background:#faf9f4;border:1px solid #d9d7cf;border-radius:4px;padding:18px 19px;margin-bottom:9px;box-shadow:0 3px 10px #1b25200b}
+.job strong{font-size:15px;letter-spacing:-.2px}.job small{display:block;color:#7c817c;margin-top:5px;font-size:12px}.job button{margin-top:14px;border:1px solid #c9ccc4;background:#fffdf8;color:#39443f;padding:8px 12px;border-radius:3px;font-size:12px;font-weight:700}
+.job:after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#a99363}
+
+/* BOOK */
+#book{background:#c7c8c1;flex-direction:column}
+.book-toolbar{height:58px;flex:none;background:#18211f;color:#e8e4d8;display:flex;align-items:center;justify-content:space-between;padding:0 13px;font-family:Manrope,sans-serif;box-shadow:0 3px 10px #0002;z-index:4}
+.toolbtn{background:transparent;border:1px solid transparent;color:#e8e4d8;padding:8px 10px;border-radius:3px;font-size:12px;font-weight:700}.toolbtn:hover{border-color:#ffffff1a;background:#ffffff08}
+.joblabel{font:500 11px "DM Mono",monospace;letter-spacing:1.2px;color:#b8c0b8;text-transform:uppercase}
+.book-wrap{flex:1;display:flex;justify-content:center;overflow:auto;padding:20px 12px 38px}
+.page{position:relative;width:min(920px,100%);min-height:calc(100vh - 116px);background-color:var(--paper);box-shadow:0 15px 40px #2225;border-radius:2px;padding:38px 42px 110px 92px;
+background-image:linear-gradient(to right,transparent 0,transparent 61px,#c8948c 62px,#c8948c 63px,transparent 64px),
+repeating-linear-gradient(to bottom,transparent 0,transparent 30px,var(--paperline) 31px,var(--paperline) 32px)}
+.page:before{content:"";position:absolute;top:0;left:64px;bottom:0;border-left:1px solid #b77970}
+.book-meta{position:relative;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #cfc9bb;line-height:1.55;font-size:12px;color:#77786f}.book-meta strong{display:block;font-size:23px;line-height:1.1;letter-spacing:-.8px;color:#222a27;margin-bottom:4px}
+.book-meta strong:after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#a99363;margin:0 0 2px 8px}
+.notes{position:relative}.note{min-height:32px;padding:3px 0;display:flex;gap:12px;align-items:flex-start}.note-no{width:27px;text-align:right;color:#a49d8e;font:500 10px "DM Mono",monospace;padding-top:5px}.note-text{font:400 14px/25px "DM Mono",monospace;white-space:pre-wrap;color:#29312e}.note-type{font:500 8px "DM Mono",monospace;color:#aaa292;margin-left:auto;padding-top:7px;letter-spacing:.5px}
+.empty-note{color:#aaa597;font:italic 13px/25px Manrope;padding:10px 0}
+.addbar{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 28px));z-index:5}
+.addbar button{width:100%;padding:14px 18px;border:0;border-radius:3px;background:#1b2522;color:#fff;box-shadow:0 7px 20px #17201f44;font-weight:700;font-size:12px;letter-spacing:.2px}
+
+/* DIALOG */
+.modal{display:none;position:fixed;inset:0;background:#17201f88;z-index:20;align-items:center;justify-content:center;padding:16px}.modal.show{display:flex}
+.dialog{width:min(500px,100%);background:#f7f5ee;border:1px solid #d4d0c4;border-radius:4px;padding:25px;box-shadow:0 22px 55px #0005}.dialog h2{margin:0 0 20px;font-size:22px;letter-spacing:-.6px}.field{margin:13px 0}.field label{display:block;font:600 9px "DM Mono",monospace;letter-spacing:1px;color:#777d77;margin-bottom:7px}.field input{width:100%;padding:12px;border:1px solid #cdd0c9;background:#fffdf8;border-radius:3px;color:var(--ink);outline:none}.field input:focus{border-color:#7b8d80;box-shadow:0 0 0 3px #657a6c14}.actions{display:flex;gap:9px;margin-top:22px}.actions button{flex:1;padding:12px;border:1px solid #c9cbc4;background:#fffdf8;border-radius:3px;font-size:12px;font-weight:700}.actions .save{background:#496052;color:#fff;border-color:#496052}
+@media(max-width:600px){.cover{min-height:580px;padding:42px 34px}.cover:after{inset:15px}.brandmark{margin-bottom:62px}.title{font-size:45px}.cover-footer{left:34px}.book-wrap{padding:0}.page{min-height:calc(100vh - 58px);border-radius:0;padding:30px 18px 110px 62px;box-shadow:none}.page:before{left:45px}.book-meta strong{font-size:20px}.note-text{font-size:12px;line-height:25px}.note-type{display:none}}
 </style>
 </head>
 <body>
 <div class="app">
 <section id="home" class="screen active">
   <div class="cover">
-    <h1 class="title">Field Book</h1>
-    <p class="subtitle">Digital field notes for survey work</p>
-    <button class="cover-btn primary" onclick="newJob()">＋ Create New Job</button>
-    <button class="cover-btn" onclick="showJobs()">▣ Job Storage</button>
-    <div class="cover-footer">Prototype v0.0.2</div>
+    <div class="brandmark"><span class="branddot"></span> SURVEY FIELD SYSTEM</div>
+    <h1 class="title">Field<br>Book</h1>
+    <p class="subtitle">A focused digital field book for professional survey work.</p>
+    <button class="cover-btn primary" onclick="newJob()">Create New Job <span>01</span></button>
+    <button class="cover-btn" onclick="showJobs()">Job Storage <span>02</span></button>
+    <div class="cover-footer">FIELD BOOK · PROTOTYPE 0.0.3</div>
   </div>
 </section>
 
@@ -92,7 +109,7 @@ button{cursor:pointer}
 <div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
 
 <script>
-const KEY='fieldBook.v002';
+const KEY='fieldBook.v003';
 let db=JSON.parse(localStorage.getItem(KEY)||'{"jobs":[],"active":null}');
 function save(){localStorage.setItem(KEY,JSON.stringify(db))}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
@@ -112,7 +129,7 @@ function createJob(){let j={id:uid(),number:jn.value.trim()||nextJob(),name:jnam
 function renderJobs(){jobList.innerHTML=db.jobs.map(j=>`<div class="job"><strong>${esc(j.number)} — ${esc(j.name)}</strong><small>${esc(j.site||'No site entered')} · ${j.notes.length} field note${j.notes.length===1?'':'s'}</small><button onclick="openBook('${j.id}')">Open Field Book →</button></div>`).join('')||'<div style="padding:30px;text-align:center;color:#777">No jobs stored yet.</div>'}
 function openBook(id){if(id)db.active=id;save();renderBook();screen('book')}
 function active(){return db.jobs.find(j=>j.id===db.active)}
-function renderBook(){let j=active();if(!j)return home();toolbarJob.textContent=j.number;bookMeta.innerHTML=`<strong>${esc(j.name)}</strong><br>${esc(j.site||'No site entered')}<br><span style="color:#777">${new Date(j.created).toLocaleDateString('en-AU')}</span>`;notes.innerHTML=j.notes.map((n,i)=>`<div class="note"><span class="note-no">${String(i+1).padStart(2,'0')}</span><span class="note-text">${esc(n.text)}</span><span class="note-type">${esc(n.type)}</span></div>`).join('')||'<div class="empty-note">Field notes will appear here…</div>'}
+function renderBook(){let j=active();if(!j)return home();toolbarJob.textContent=j.number;bookMeta.innerHTML=`<strong>${esc(j.name)}</strong><span style="font:500 9px 'DM Mono',monospace;letter-spacing:1px;color:#9a8a67;margin-left:8px">${esc(j.number)}</span><br>${esc(j.site||'No site entered')}<br><span style="color:#777">FIELD BOOK OPENED · ${new Date(j.created).toLocaleDateString('en-AU')}</span>`;notes.innerHTML=j.notes.map((n,i)=>`<div class="note"><span class="note-no">${String(i+1).padStart(2,'0')}</span><span class="note-text">${esc(n.text)}</span><span class="note-type">${esc(n.type)}</span></div>`).join('')||'<div class="empty-note">Field notes will appear here…</div>'}
 function addNote(){dialog.innerHTML=`<h2>Field Note</h2><div class="field"><label>NOTE</label><input id="nt" autofocus placeholder="Enter field observation…"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveNote()">Add Note</button></div>`;openModal();setTimeout(()=>nt.focus(),50)}
 function saveNote(){let j=active(),v=nt.value.trim();if(!v)return; j.notes.push({id:uid(),text:v,type:'NOTE',time:new Date().toISOString()});save();closeModal();renderBook()}
 function jobDetails(){let j=active();dialog.innerHTML=`<h2>${esc(j.number)}</h2><div class="field"><label>JOB NAME</label><input id="dn" value="${esc(j.name)}"></div><div class="field"><label>SITE</label><input id="ds" value="${esc(j.site)}"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveDetails()">Save</button></div>`;openModal()}
@@ -120,19 +137,35 @@ function saveDetails(){let j=active();j.name=dn.value.trim()||'Untitled Survey';
 function openModal(){modal.classList.add('show')};function closeModal(){modal.classList.remove('show')}
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 modal.addEventListener('click',e=>{if(e.target===modal)closeModal()})
-if('serviceWorker' in navigator){
-  let refreshing=false;
-  navigator.serviceWorker.addEventListener('controllerchange',()=>{
-    if(refreshing)return;
-    refreshing=true;
-    window.location.reload();
-  });
-  window.addEventListener('load',async()=>{
-    try{
-      const reg=await navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'});
-      // Force the browser to check GitHub for a fresh service worker on every app launch.
-      await reg.update();
-    }catch(e){}
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+    .then(registration => {
+      // Ask the browser to check GitHub Pages for a new worker every time
+      // the installed app is opened/refreshed.
+      registration.update();
+
+      registration.addEventListener('updatefound', () => {
+        const worker = registration.installing;
+        if (!worker) return;
+        worker.addEventListener('statechange', () => {
+          if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+            worker.postMessage('SKIP_WAITING');
+          }
+        });
+      });
+    })
+    .catch(() => {});
+
+  // When the new worker takes control, reload once so the new app shell
+  // becomes visible immediately. The session flag prevents reload loops.
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (refreshing) return;
+    refreshing = true;
+    if (!sessionStorage.getItem('fieldBookUpdated')) {
+      sessionStorage.setItem('fieldBookUpdated', '1');
+      window.location.reload();
+    }
   });
 }
 renderJobs();
