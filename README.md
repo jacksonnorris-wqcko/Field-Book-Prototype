@@ -1,29 +1,9 @@
-# Field Book v0.0.15
+# Field Book v0.0.16
 
-Field sketch usability update.
+Bug-fix release for v0.0.15.
 
-### Line
-- Tap A, tap B, tap C, etc. to build a polyline.
-- Green point markers show the active points while constructing the line.
-- Double-tap the last point to close the polyline back to its original start.
-- The temporary point markers disappear when the line is finished.
+v0.0.15 contained a JavaScript syntax error in the tool help configuration: the `move` help entry was missing a comma before `eraser`. Because the browser could not parse the script, the entire application JavaScript stopped loading, which broke Create New Job and Job Storage as well as the drawing functions.
 
-### Arc
-- Tap the start point.
-- Tap the end point.
-- Drag the middle/control point outward to set the radius/bulge.
-- Release to place the arc.
-- Temporary construction points/guide lines disappear when complete.
+v0.0.16 fixes that syntax error and verifies the embedded JavaScript parses successfully.
 
-### Text
-- Added Move tool.
-- Tap a text label, drag it to reposition it.
-- Use the floating ↺ / ↻ controls to rotate it in 15° increments.
-- Selected text shows a subtle outline while being positioned.
-
-### Tools
-- Tool tray automatically closes after selecting a tool.
-- No drawing tool is active when the field book first opens.
-
-### Updates
-- v0.0.15 keeps the v0.0.14 update system.
+No intended UI or drawing-function changes were made in this release.
