@@ -1,15 +1,16 @@
-# Field Book v0.0.9
+# Field Book v0.0.10
 
-Home Screen icon correction.
+Logo correction release.
 
-This release deliberately removes the previous SVG icon from the PWA manifest and uses a newly named PNG asset generated from the exact clean logo supplied by the user.
+The Home Screen icon has been redrawn from scratch as clean artwork matching the simple dark rounded-square logo used by Field Book. It is not cropped from the supplied screenshot.
+
+The icon has a new filename so iOS cannot reuse the previous icon asset.
+
+Replace the complete GitHub Pages repository contents with these files, then delete the existing Home Screen shortcut and add Field Book again from Safari.
 
 Files:
 - index.html
 - manifest.json
 - sw.js
-- field-book-home-icon-v009.png
+- field-book-home-icon-v010.png
 - README.md
-
-IMPORTANT:
-Delete the existing Field Book Home Screen shortcut before installing this version. Open the new GitHub Pages URL in Safari and use Share > Add to Home Screen. The icon asset has a new filename so iOS cannot reuse the previous icon URL.
