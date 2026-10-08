@@ -1,4 +1,4 @@
-const VERSION='0.0.16';
+const VERSION='0.0.17';
 const CACHE=`field-book-${VERSION}`;
 const CORE=['./','./index.html','./manifest.json','./version.json','./field-book-logo-v012.png'];
 

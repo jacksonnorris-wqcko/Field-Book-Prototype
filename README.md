@@ -1,9 +1,16 @@
-# Field Book v0.0.16
+# Field Book v0.0.17
 
-Bug-fix release for v0.0.15.
+Touch/zoom usability release.
 
-v0.0.15 contained a JavaScript syntax error in the tool help configuration: the `move` help entry was missing a comma before `eraser`. Because the browser could not parse the script, the entire application JavaScript stopped loading, which broke Create New Job and Job Storage as well as the drawing functions.
+## Zoom
+- Disabled iOS/browser page-level zoom so taps are no longer interpreted as accidental page zooms.
+- Field Book now uses its own two-finger pinch-to-zoom gesture.
+- Single-finger taps remain available for drawing tools.
+- Zoom range is 65%–300%.
+- A small zoom control appears while zoomed, with minus, percentage, plus, and 1:1 reset.
+- Zoom resets to 1:1 when opening a job.
 
-v0.0.16 fixes that syntax error and verifies the embedded JavaScript parses successfully.
+The existing line, arc, text/move and job functionality from v0.0.16 is retained.
 
-No intended UI or drawing-function changes were made in this release.
+## Update system
+Keeps the v0.0.14+ version-check/service-worker update mechanism.
