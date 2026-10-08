@@ -1,23 +1,35 @@
-# Field Book v0.0.4
+# Field Book v0.0.5
 
-Premium visual redesign of the digital survey field-book prototype.
+Premium mobile-first digital survey field book prototype.
 
-The physical field-book concept remains the core interaction, but the interface has been rebuilt with a restrained professional aesthetic: dark field-book cover, sage/charcoal controls, warm paper, subtle ruled lines, brass accent and monospaced field-note typography.
+## Files
 
-## Flow
-Launch → Create New Job / Job Storage → Open Job → Full field-book page.
+- `index.html` — app
+- `manifest.json` — PWA configuration
+- `sw.js` — offline storage and automatic update system
+- `icon.svg` — app icon
+- `README.md` — setup notes
 
-Survey-specific tools remain intentionally minimal so they can be designed around the field-book surface in the next versions.
+## GitHub Pages
 
+Upload/replace all files in the repository with these files, then allow GitHub Pages a moment to publish.
 
-## v0.0.4 update behaviour
+Open the GitHub Pages address on the phone and add it to the Home Screen.
 
-The service worker has been rebuilt to make GitHub Pages updates reliable for installed PWAs:
-- `updateViaCache: none` forces the browser to check the service-worker script.
-- `registration.update()` runs when the app opens.
-- Navigation requests use `cache: no-store`, so the latest `index.html` is fetched from GitHub.
-- New service workers activate immediately.
-- Old caches are deleted during activation.
-- The page reloads automatically when the new worker takes control.
+## Automatic updates
 
-After uploading v0.0.4 to GitHub Pages, close the installed Field Book app completely and open it once. From then on, future refreshes/openings should pick up new GitHub versions without requiring the user to clear Safari data.
+v0.0.5 uses:
+- service-worker `updateViaCache: "none"`
+- explicit `registration.update()`
+- versioned service-worker cache
+- deletion of old Field Book caches
+- network-first navigation
+- network-first app assets
+- automatic activation of waiting workers
+- automatic page reload after a new worker takes control
+
+Future releases should bump the `VERSION` in `sw.js`, the `APP_VERSION` in `index.html`, and the visible version text.
+
+## Data
+
+This prototype stores jobs locally in the browser/device. Cloud sync and server integration are not yet implemented.

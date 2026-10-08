@@ -3,172 +3,123 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5f0df">
+<meta name="theme-color" content="#111614">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Field Book">
+<title>Field Book — v0.0.5</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg">
-<title>Field Book</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--ink:#17201d;--muted:#737c77;--paper:#fbfaf7;--line:#ddd9d0;--accent:#2c6855;--gold:#a88955}
 *{box-sizing:border-box}
-:root{--ink:#17201f;--ink2:#26302e;--cream:#f4f0e6;--paper:#fbf9f3;--paperline:#d9d4c7;--muted:#7c817c;--sage:#657a6c;--sage2:#496052;--brass:#aa9364;--edge:#d8d3c7;--white:#fffdf8}
-html,body{margin:0;height:100%;background:#d9d8d1;color:var(--ink);font-family:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+html,body{margin:0;min-height:100%;background:#dfe2de;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 button,input{font:inherit}button{cursor:pointer}
-.app{min-height:100%;display:flex;flex-direction:column}
 .screen{display:none;min-height:100vh}.screen.active{display:flex}
-
-/* COVER */
-#home{align-items:center;justify-content:center;padding:24px;background:
-radial-gradient(circle at 15% 15%,#fff9 0,transparent 28%),
-linear-gradient(135deg,#d9dbd4,#c9cec6)}
-.cover{position:relative;width:min(500px,94vw);min-height:620px;background:var(--ink);color:#f4f0e6;border-radius:5px;box-shadow:0 28px 60px #18201e33,0 4px 12px #18201e22;padding:54px 44px;overflow:hidden}
-.cover:before{content:"";position:absolute;left:0;top:0;bottom:0;width:9px;background:linear-gradient(#a99363,#766543)}
-.cover:after{content:"";position:absolute;inset:20px;border:1px solid #ffffff18;pointer-events:none}
-.brandmark{display:flex;align-items:center;gap:11px;margin-bottom:76px;font:500 11px "DM Mono",monospace;letter-spacing:2.2px;text-transform:uppercase;color:#cfc8b7}
-.branddot{width:8px;height:8px;border-radius:50%;background:var(--brass);box-shadow:0 0 0 5px #aa93641a}
-.title{font-size:52px;line-height:.98;letter-spacing:-2.7px;margin:0 0 12px;font-weight:700}.subtitle{font-size:15px;line-height:1.6;color:#b7bcb5;margin:0 0 48px;max-width:300px}
-.cover-btn{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;padding:17px 18px;margin:10px 0;background:#ffffff09;border:1px solid #ffffff18;border-radius:3px;color:#f5f1e7;text-align:left;font-weight:700;transition:.18s}
-.cover-btn span{font:500 11px "DM Mono",monospace;color:#929b93}.cover-btn:hover{background:#ffffff12;border-color:#aa936455}.cover-btn.primary{background:#e8e2d2;color:var(--ink);border-color:#e8e2d2}.cover-footer{position:absolute;bottom:40px;left:44px;font:500 9px "DM Mono",monospace;letter-spacing:1.5px;color:#737a73}
-
-/* JOBS */
-#jobs{background:#eef0eb;flex-direction:column}
-.jobs-head{padding:24px max(22px,calc((100% - 780px)/2));border-bottom:1px solid #d5d9d2;background:#f4f5f1}
-.jobs-head h1{margin:0;font-size:31px;letter-spacing:-1px}.jobs-head p{margin:6px 0 0;color:var(--muted);font-size:13px}.back{border:0;background:none;padding:0;margin-bottom:18px;color:#69716c;font-size:12px;font-weight:700}
-.jobs-body{width:min(780px,100%);margin:auto;padding:22px}.newjob{width:100%;padding:15px;background:var(--sage2);color:#fff;border:0;border-radius:4px;font-weight:700;letter-spacing:.2px;margin-bottom:18px;box-shadow:0 5px 14px #49605220}
-.job{position:relative;background:#faf9f4;border:1px solid #d9d7cf;border-radius:4px;padding:18px 19px;margin-bottom:9px;box-shadow:0 3px 10px #1b25200b}
-.job strong{font-size:15px;letter-spacing:-.2px}.job small{display:block;color:#7c817c;margin-top:5px;font-size:12px}.job button{margin-top:14px;border:1px solid #c9ccc4;background:#fffdf8;color:#39443f;padding:8px 12px;border-radius:3px;font-size:12px;font-weight:700}
-.job:after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#a99363}
-
-/* BOOK */
-#book{background:#c7c8c1;flex-direction:column}
-.book-toolbar{height:58px;flex:none;background:#18211f;color:#e8e4d8;display:flex;align-items:center;justify-content:space-between;padding:0 13px;font-family:Manrope,sans-serif;box-shadow:0 3px 10px #0002;z-index:4}
-.toolbtn{background:transparent;border:1px solid transparent;color:#e8e4d8;padding:8px 10px;border-radius:3px;font-size:12px;font-weight:700}.toolbtn:hover{border-color:#ffffff1a;background:#ffffff08}
-.joblabel{font:500 11px "DM Mono",monospace;letter-spacing:1.2px;color:#b8c0b8;text-transform:uppercase}
-.book-wrap{flex:1;display:flex;justify-content:center;overflow:auto;padding:20px 12px 38px}
-.page{position:relative;width:min(920px,100%);min-height:calc(100vh - 116px);background-color:var(--paper);box-shadow:0 15px 40px #2225;border-radius:2px;padding:38px 42px 110px 92px;
-background-image:linear-gradient(to right,transparent 0,transparent 61px,#c8948c 62px,#c8948c 63px,transparent 64px),
-repeating-linear-gradient(to bottom,transparent 0,transparent 30px,var(--paperline) 31px,var(--paperline) 32px)}
-.page:before{content:"";position:absolute;top:0;left:64px;bottom:0;border-left:1px solid #b77970}
-.book-meta{position:relative;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid #cfc9bb;line-height:1.55;font-size:12px;color:#77786f}.book-meta strong{display:block;font-size:23px;line-height:1.1;letter-spacing:-.8px;color:#222a27;margin-bottom:4px}
-.book-meta strong:after{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#a99363;margin:0 0 2px 8px}
-.notes{position:relative}.note{min-height:32px;padding:3px 0;display:flex;gap:12px;align-items:flex-start}.note-no{width:27px;text-align:right;color:#a49d8e;font:500 10px "DM Mono",monospace;padding-top:5px}.note-text{font:400 14px/25px "DM Mono",monospace;white-space:pre-wrap;color:#29312e}.note-type{font:500 8px "DM Mono",monospace;color:#aaa292;margin-left:auto;padding-top:7px;letter-spacing:.5px}
-.empty-note{color:#aaa597;font:italic 13px/25px Manrope;padding:10px 0}
-.addbar{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 28px));z-index:5}
-.addbar button{width:100%;padding:14px 18px;border:0;border-radius:3px;background:#1b2522;color:#fff;box-shadow:0 7px 20px #17201f44;font-weight:700;font-size:12px;letter-spacing:.2px}
-
-/* DIALOG */
-.modal{display:none;position:fixed;inset:0;background:#17201f88;z-index:20;align-items:center;justify-content:center;padding:16px}.modal.show{display:flex}
-.dialog{width:min(500px,100%);background:#f7f5ee;border:1px solid #d4d0c4;border-radius:4px;padding:25px;box-shadow:0 22px 55px #0005}.dialog h2{margin:0 0 20px;font-size:22px;letter-spacing:-.6px}.field{margin:13px 0}.field label{display:block;font:600 9px "DM Mono",monospace;letter-spacing:1px;color:#777d77;margin-bottom:7px}.field input{width:100%;padding:12px;border:1px solid #cdd0c9;background:#fffdf8;border-radius:3px;color:var(--ink);outline:none}.field input:focus{border-color:#7b8d80;box-shadow:0 0 0 3px #657a6c14}.actions{display:flex;gap:9px;margin-top:22px}.actions button{flex:1;padding:12px;border:1px solid #c9cbc4;background:#fffdf8;border-radius:3px;font-size:12px;font-weight:700}.actions .save{background:#496052;color:#fff;border-color:#496052}
-@media(max-width:600px){.cover{min-height:580px;padding:42px 34px}.cover:after{inset:15px}.brandmark{margin-bottom:62px}.title{font-size:45px}.cover-footer{left:34px}.book-wrap{padding:0}.page{min-height:calc(100vh - 58px);border-radius:0;padding:30px 18px 110px 62px;box-shadow:none}.page:before{left:45px}.book-meta strong{font-size:20px}.note-text{font-size:12px;line-height:25px}.note-type{display:none}}
+#home{align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 50% 0,#eef1ed,#dfe2de 55%,#d3d7d3)}
+.launch{width:min(520px,100%);background:rgba(251,250,247,.98);border:1px solid #d7dad6;border-radius:24px;box-shadow:0 22px 60px #17201d22;overflow:hidden}
+.launch-top{height:7px;background:linear-gradient(90deg,#1e4d3e,#2c6855,#a88955)}
+.launch-body{padding:42px}.eyebrow{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.logo{width:54px;height:54px;border-radius:15px;background:var(--ink);display:grid;place-items:center;color:#fff;font-size:25px;margin:18px 0 22px}
+h1{font-size:38px;letter-spacing:-1.4px;margin:0 0 8px}.lead{color:var(--muted);margin:0 0 30px;line-height:1.5}
+.launch-btn{width:100%;height:54px;border:1px solid var(--line);border-radius:13px;background:#fff;text-align:left;padding:0 17px;margin-top:10px;font-weight:700;color:var(--ink)}
+.launch-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+.launch-btn span{float:right;opacity:.6}.version{margin-top:30px;color:#969e99;font-size:10px;text-align:center;letter-spacing:1.2px}
+#jobs{background:#f2f3f0;flex-direction:column}
+.topbar{height:70px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 max(18px,calc((100% - 820px)/2))}
+.topbar button{border:0;background:transparent;color:var(--muted);font-weight:700}.topbar h2{margin:auto;font-size:16px}.top-spacer{width:45px}
+.jobs-content{width:min(820px,100%);margin:auto;padding:28px 20px 50px}.jobs-title{font-size:30px;letter-spacing:-.8px;margin:0 0 5px}.jobs-sub{color:var(--muted);margin:0 0 22px}
+.new-job{border:0;border-radius:13px;background:var(--ink);color:#fff;padding:14px 17px;font-weight:750;margin-bottom:18px}
+.job{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px 18px;margin:9px 0;box-shadow:0 5px 18px #17201d0a}
+.job-main{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.job-no{font-size:10px;font-weight:800;letter-spacing:1.2px;color:var(--accent);margin-bottom:4px}
+.job-name{font-size:17px;font-weight:750}.job-site{font-size:13px;color:var(--muted);margin-top:5px}.open-job{border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 11px;font-weight:700}
+.empty{padding:45px 10px;text-align:center;color:var(--muted)}
+#book{background:#171d1a;flex-direction:column}
+.bookbar{height:62px;flex:none;background:#111614;color:#fff;display:flex;align-items:center;padding:0 max(14px,calc((100% - 1120px)/2));gap:12px;border-bottom:1px solid #303934}
+.bookbar button{border:0;background:#202925;color:#e9eeeb;border-radius:10px;padding:9px 12px;font-weight:700}.bookbar .center{flex:1;text-align:center;min-width:0}
+.jobid{font-size:10px;color:#98aaa2;letter-spacing:1.5px;font-weight:800}.jobtitle{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bookarea{flex:1;display:flex;justify-content:center;overflow:auto;padding:22px 18px 90px}
+.paper{position:relative;width:min(1060px,100%);min-height:calc(100vh - 106px);background:var(--paper);border-radius:5px;box-shadow:0 20px 55px #0000003d;overflow:hidden}
+.paper-head{padding:28px 34px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}
+.paper-head h1{font-size:25px;letter-spacing:-.7px;margin:0}.paper-head p{font-size:13px;color:var(--muted);margin:7px 0 0}
+.paper-meta{text-align:right;font-size:10px;color:var(--muted);line-height:1.8;min-width:160px}.paper-meta b{color:var(--accent)}
+.sheet{padding:0 34px 80px}.section-label{font-size:10px;letter-spacing:1.5px;color:#8a918d;font-weight:800;padding:18px 0 8px;text-transform:uppercase}
+.note-row{display:grid;grid-template-columns:42px 1fr 70px;min-height:42px;border-bottom:1px solid #ece9e2;align-items:start}
+.note-no{font-size:11px;color:#a2a7a4;padding-top:13px}.note-text{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:14px;line-height:42px;white-space:pre-wrap}.note-type{text-align:right;font-size:9px;letter-spacing:1px;color:#9a9f9c;padding-top:15px;font-weight:800}
+.blank{color:#b2b6b3;font-style:italic;font-size:13px;padding:25px 0}
+.addbar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);width:min(430px,calc(100% - 32px));display:flex;gap:8px;z-index:4}
+.addbar button{flex:1;border:1px solid #45504a;background:#202925;color:#fff;border-radius:12px;height:48px;font-weight:750;box-shadow:0 8px 22px #00000040}.addbar .primary{background:var(--accent);border-color:var(--accent)}
+.modal{display:none;position:fixed;inset:0;background:#090d0b8c;z-index:10;align-items:center;justify-content:center;padding:16px}.modal.show{display:flex}
+.dialog{width:min(500px,100%);background:var(--paper);border-radius:18px;padding:24px;box-shadow:0 25px 70px #0005}.dialog h2{margin:0 0 20px;font-size:22px}
+.field{margin:12px 0}.field label{display:block;font-size:10px;letter-spacing:1px;color:var(--muted);font-weight:800;margin-bottom:6px}.field input{width:100%;height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff}
+.actions{display:flex;gap:9px;margin-top:20px}.actions button{flex:1;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;font-weight:700}.actions .save{background:var(--ink);color:#fff;border-color:var(--ink)}
+@media(max-width:650px){#home{padding:16px}.launch-body{padding:32px 25px}.launch h1{font-size:34px}.bookarea{padding:0 0 80px}.paper{border-radius:0;min-height:calc(100vh - 62px);box-shadow:none}.paper-head{padding:23px 19px 18px}.paper-head h1{font-size:22px}.paper-meta{min-width:105px}.sheet{padding:0 19px 70px}.note-row{grid-template-columns:31px 1fr 54px}.note-text{font-size:13px}}
 </style>
 </head>
 <body>
-<div class="app">
 <section id="home" class="screen active">
-  <div class="cover">
-    <div class="brandmark"><span class="branddot"></span> SURVEY FIELD SYSTEM</div>
-    <h1 class="title">Field<br>Book</h1>
-    <p class="subtitle">A focused digital field book for professional survey work.</p>
-    <button class="cover-btn primary" onclick="newJob()">Create New Job <span>01</span></button>
-    <button class="cover-btn" onclick="showJobs()">Job Storage <span>02</span></button>
-    <div class="cover-footer">FIELD BOOK · PROTOTYPE 0.0.3</div>
-  </div>
+<div class="launch"><div class="launch-top"></div><div class="launch-body">
+<div class="eyebrow">Survey Field System</div><div class="logo">⌁</div><h1>Field Book</h1>
+<p class="lead">A clean digital field book for recording survey observations in the field.</p>
+<button class="launch-btn primary" onclick="newJob()">Create New Job <span>→</span></button>
+<button class="launch-btn" onclick="showJobs()">Job Storage <span>→</span></button>
+<div class="version">FIELD BOOK v0.0.5</div>
+</div></div>
 </section>
 
 <section id="jobs" class="screen">
-  <div class="jobs-head">
-    <button class="back" onclick="home()">← Back</button>
-    <h1>Job Storage</h1><p>Open an existing field book or start a new job.</p>
-  </div>
-  <div class="jobs-body">
-    <button class="newjob" onclick="newJob()">＋ CREATE NEW JOB</button>
-    <div id="jobList"></div>
-  </div>
+<div class="topbar"><button onclick="home()">← Back</button><h2>Job Storage</h2><div class="top-spacer"></div></div>
+<div class="jobs-content"><h1 class="jobs-title">Jobs</h1><p class="jobs-sub">Your field books and survey projects.</p>
+<button class="new-job" onclick="newJob()">＋ Create New Job</button><div id="jobList"></div></div>
 </section>
 
 <section id="book" class="screen">
-  <div class="book-toolbar">
-    <button class="toolbtn" onclick="showJobs()">☰ Jobs</button>
-    <span class="joblabel" id="toolbarJob"></span>
-    <button class="toolbtn" onclick="jobDetails()">Info</button>
-  </div>
-  <div class="book-wrap">
-    <main class="page">
-      <div class="book-meta" id="bookMeta"></div>
-      <div class="notes" id="notes"></div>
-    </main>
-  </div>
-  <div class="addbar">
-    <button onclick="addNote()">＋ Field Note</button>
-  </div>
+<div class="bookbar"><button onclick="showJobs()">Jobs</button><div class="center"><div class="jobid" id="toolbarJob"></div><div class="jobtitle" id="toolbarTitle"></div></div><button onclick="jobDetails()">Info</button></div>
+<div class="bookarea"><main class="paper">
+<header class="paper-head"><div><h1 id="bookTitle"></h1><p id="bookSite"></p></div><div class="paper-meta" id="bookMeta"></div></header>
+<div class="sheet"><div class="section-label">Field observations</div><div id="notes"></div></div>
+</main></div>
+<div class="addbar"><button class="primary" onclick="addNote()">＋ Add Field Note</button><button onclick="jobDetails()">Job Info</button></div>
 </section>
-</div>
 
 <div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
 
 <script>
-const KEY='fieldBook.v003';
+const APP_VERSION='0.0.5';
+const KEY='fieldBook.v005';
 let db=JSON.parse(localStorage.getItem(KEY)||'{"jobs":[],"active":null}');
+const $=id=>document.getElementById(id);
 function save(){localStorage.setItem(KEY,JSON.stringify(db))}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
-function screen(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')}
-function home(){screen('home')}
-function showJobs(){renderJobs();screen('jobs')}
-function nextJob(){let nums=db.jobs.map(j=>parseInt(String(j.number).split('-').pop())).filter(Number.isFinite);return '26-'+String((Math.max(0,...nums)+1)).padStart(4,'0')}
-function newJob(){
- dialog.innerHTML=`<h2>New Job</h2>
- <div class="field"><label>JOB NUMBER</label><input id="jn" value="${nextJob()}"></div>
- <div class="field"><label>JOB NAME</label><input id="jname" placeholder="e.g. Boundary Survey"></div>
- <div class="field"><label>SITE / ADDRESS</label><input id="jsite" placeholder="Optional"></div>
- <div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="createJob()">Create Job</button></div>`;
- openModal()
-}
-function createJob(){let j={id:uid(),number:jn.value.trim()||nextJob(),name:jname.value.trim()||'Untitled Survey',site:jsite.value.trim(),created:new Date().toISOString(),notes:[]};db.jobs.unshift(j);db.active=j.id;save();closeModal();openBook()}
-function renderJobs(){jobList.innerHTML=db.jobs.map(j=>`<div class="job"><strong>${esc(j.number)} — ${esc(j.name)}</strong><small>${esc(j.site||'No site entered')} · ${j.notes.length} field note${j.notes.length===1?'':'s'}</small><button onclick="openBook('${j.id}')">Open Field Book →</button></div>`).join('')||'<div style="padding:30px;text-align:center;color:#777">No jobs stored yet.</div>'}
-function openBook(id){if(id)db.active=id;save();renderBook();screen('book')}
-function active(){return db.jobs.find(j=>j.id===db.active)}
-function renderBook(){let j=active();if(!j)return home();toolbarJob.textContent=j.number;bookMeta.innerHTML=`<strong>${esc(j.name)}</strong><span style="font:500 9px 'DM Mono',monospace;letter-spacing:1px;color:#9a8a67;margin-left:8px">${esc(j.number)}</span><br>${esc(j.site||'No site entered')}<br><span style="color:#777">FIELD BOOK OPENED · ${new Date(j.created).toLocaleDateString('en-AU')}</span>`;notes.innerHTML=j.notes.map((n,i)=>`<div class="note"><span class="note-no">${String(i+1).padStart(2,'0')}</span><span class="note-text">${esc(n.text)}</span><span class="note-type">${esc(n.type)}</span></div>`).join('')||'<div class="empty-note">Field notes will appear here…</div>'}
-function addNote(){dialog.innerHTML=`<h2>Field Note</h2><div class="field"><label>NOTE</label><input id="nt" autofocus placeholder="Enter field observation…"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveNote()">Add Note</button></div>`;openModal();setTimeout(()=>nt.focus(),50)}
-function saveNote(){let j=active(),v=nt.value.trim();if(!v)return; j.notes.push({id:uid(),text:v,type:'NOTE',time:new Date().toISOString()});save();closeModal();renderBook()}
-function jobDetails(){let j=active();dialog.innerHTML=`<h2>${esc(j.number)}</h2><div class="field"><label>JOB NAME</label><input id="dn" value="${esc(j.name)}"></div><div class="field"><label>SITE</label><input id="ds" value="${esc(j.site)}"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveDetails()">Save</button></div>`;openModal()}
-function saveDetails(){let j=active();j.name=dn.value.trim()||'Untitled Survey';j.site=ds.value.trim();save();closeModal();renderBook()}
-function openModal(){modal.classList.add('show')};function closeModal(){modal.classList.remove('show')}
 function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-modal.addEventListener('click',e=>{if(e.target===modal)closeModal()})
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
-    .then(registration => {
-      // Ask the browser to check GitHub Pages for a new worker every time
-      // the installed app is opened/refreshed.
-      registration.update();
-
-      registration.addEventListener('updatefound', () => {
-        const worker = registration.installing;
-        if (!worker) return;
-        worker.addEventListener('statechange', () => {
-          if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-            worker.postMessage('SKIP_WAITING');
-          }
-        });
-      });
-    })
-    .catch(() => {});
-
-  // When the new worker takes control, reload once so the new app shell
-  // becomes visible immediately. The session flag prevents reload loops.
-  let refreshing = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (refreshing) return;
-    refreshing = true;
-    if (!sessionStorage.getItem('fieldBookUpdated')) {
-      sessionStorage.setItem('fieldBookUpdated', '1');
-      window.location.reload();
-    }
-  });
-}
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active')}
+function home(){show('home')}
+function showJobs(){renderJobs();show('jobs')}
+function nextJob(){let n=db.jobs.map(j=>parseInt(String(j.number).split('-').pop())).filter(Number.isFinite);return '26-'+String((Math.max(0,...n)+1)).padStart(4,'0')}
+function openModal(){$('modal').classList.add('show')}function closeModal(){$('modal').classList.remove('show')}
+function newJob(){$('dialog').innerHTML=`<h2>Create New Job</h2><div class="field"><label>JOB NUMBER</label><input id="jn" value="${nextJob()}"></div><div class="field"><label>JOB NAME</label><input id="jname" placeholder="Boundary Survey"></div><div class="field"><label>SITE / ADDRESS</label><input id="jsite" placeholder="Optional"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="createJob()">Create Job</button></div>`;openModal();setTimeout(()=>$('jname').focus(),50)}
+function createJob(){let j={id:uid(),number:$('jn').value.trim()||nextJob(),name:$('jname').value.trim()||'Untitled Survey',site:$('jsite').value.trim(),created:new Date().toISOString(),notes:[]};db.jobs.unshift(j);db.active=j.id;save();closeModal();openBook()}
+function renderJobs(){$('jobList').innerHTML=db.jobs.map(j=>`<article class="job"><div class="job-main"><div><div class="job-no">${esc(j.number)}</div><div class="job-name">${esc(j.name)}</div><div class="job-site">${esc(j.site||'No site entered')} · ${j.notes.length} note${j.notes.length===1?'':'s'}</div></div><button class="open-job" onclick="openBook('${j.id}')">Open →</button></div></article>`).join('')||'<div class="empty">No jobs stored yet.</div>'}
+function active(){return db.jobs.find(j=>j.id===db.active)}
+function openBook(id){if(id)db.active=id;save();renderBook();show('book')}
+function renderBook(){let j=active();if(!j)return home();$('toolbarJob').textContent=j.number;$('toolbarTitle').textContent=j.name;$('bookTitle').textContent=j.name;$('bookSite').textContent=j.site||'No site entered';$('bookMeta').innerHTML=`JOB ${esc(j.number)}<br>${new Date(j.created).toLocaleDateString('en-AU')}<br>${j.notes.length} OBSERVATION${j.notes.length===1?'':'S'}<br><b>v${APP_VERSION}</b>`;$('notes').innerHTML=j.notes.map((n,i)=>`<div class="note-row"><div class="note-no">${String(i+1).padStart(2,'0')}</div><div class="note-text">${esc(n.text)}</div><div class="note-type">${esc(n.type||'NOTE')}</div></div>`).join('')||'<div class="blank">No observations recorded. Add your first field note below.</div>'}
+function addNote(){$('dialog').innerHTML=`<h2>New Field Note</h2><div class="field"><label>OBSERVATION</label><input id="nt" autofocus placeholder="Enter field observation…"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveNote()">Add Note</button></div>`;openModal();setTimeout(()=>$('nt').focus(),50)}
+function saveNote(){let j=active(),v=$('nt').value.trim();if(!v)return;j.notes.push({id:uid(),text:v,type:'NOTE',time:new Date().toISOString()});save();closeModal();renderBook()}
+function jobDetails(){let j=active();$('dialog').innerHTML=`<h2>Job Information</h2><div class="field"><label>JOB NUMBER</label><input value="${esc(j.number)}" disabled></div><div class="field"><label>JOB NAME</label><input id="dn" value="${esc(j.name)}"></div><div class="field"><label>SITE / ADDRESS</label><input id="ds" value="${esc(j.site)}"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveDetails()">Save</button></div>`;openModal()}
+function saveDetails(){let j=active();j.name=$('dn').value.trim()||'Untitled Survey';j.site=$('ds').value.trim();save();closeModal();renderBook()}
+$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});
 renderJobs();
+
+async function checkForUpdate(){
+  if(!('serviceWorker' in navigator))return;
+  try{
+    const reg=await navigator.serviceWorker.register('./sw.js?build='+APP_VERSION,{updateViaCache:'none'});
+    await reg.update();
+    if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
+  }catch(e){}
+}
+navigator.serviceWorker?.addEventListener('controllerchange',()=>{if(!sessionStorage.getItem('fieldBookReloaded')){sessionStorage.setItem('fieldBookReloaded','1');location.reload()}});
+checkForUpdate();
 </script>
 </body>
 </html>

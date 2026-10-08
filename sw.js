@@ -1,60 +1,51 @@
-/*
- Field Book service worker
- v0.0.4 — update-safe PWA
-*/
-const VERSION = 'field-book-v0.0.4';
-const SHELL = ['./', './index.html', './manifest.json', './icon.svg'];
+const VERSION='0.0.5';
+const CACHE=`field-book-${VERSION}`;
+const CORE=['./','./index.html','./manifest.json','./icon.svg'];
 
-self.addEventListener('install', event => {
+self.addEventListener('install',event=>{
   event.waitUntil(
-    caches.open(VERSION)
-      .then(cache => cache.addAll(SHELL))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate',event=>{
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(key => key !== VERSION).map(key => caches.delete(key))
-      ))
-      .then(() => self.clients.claim())
+      .then(keys=>Promise.all(keys.filter(k=>k.startsWith('field-book-')&&k!==CACHE).map(k=>caches.delete(k))))
+      .then(()=>self.clients.claim())
   );
 });
 
-self.addEventListener('message', event => {
-  if (event.data === 'SKIP_WAITING') self.skipWaiting();
+self.addEventListener('message',event=>{
+  if(event.data?.type==='SKIP_WAITING') self.skipWaiting();
 });
 
-self.addEventListener('fetch', event => {
-  const request = event.request;
+self.addEventListener('fetch',event=>{
+  const req=event.request;
+  if(req.method!=='GET') return;
 
-  // Always ask the network for the HTML shell. This is the important part
-  // for installed PWAs: a refresh gets the newest GitHub Pages index.html.
-  if (request.mode === 'navigate') {
+  // Always ask the network first for navigation/app-shell requests.
+  if(req.mode==='navigate'){
     event.respondWith(
-      fetch(new Request(request, { cache: 'no-store' }))
-        .then(response => {
-          const copy = response.clone();
-          caches.open(VERSION).then(cache => cache.put('./index.html', copy));
+      fetch(req,{cache:'no-store'})
+        .then(response=>{
+          const copy=response.clone();
+          caches.open(CACHE).then(cache=>cache.put('./index.html',copy));
           return response;
         })
-        .catch(() => caches.match('./index.html'))
+        .catch(()=>caches.match('./index.html'))
     );
     return;
   }
 
-  // Network-first for app assets, with an offline cache fallback.
+  // Network-first for the app files. Fall back to cache when offline.
   event.respondWith(
-    fetch(new Request(request, { cache: 'no-store' }))
-      .then(response => {
-        if (response.ok) {
-          const copy = response.clone();
-          caches.open(VERSION).then(cache => cache.put(request, copy));
-        }
+    fetch(req,{cache:'no-store'})
+      .then(response=>{
+        const copy=response.clone();
+        caches.open(CACHE).then(cache=>cache.put(req,copy));
         return response;
       })
-      .catch(() => caches.match(request).then(cached => cached || caches.match('./index.html')))
+      .catch(()=>caches.match(req))
   );
 });
