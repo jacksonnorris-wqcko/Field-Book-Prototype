@@ -1,21 +1,10 @@
-# Field Book v0.0.2
+# Field Book v0.0.3
 
-Prototype deliberately redesigned from scratch around the physical survey field-book concept.
+Premium visual redesign of the digital survey field-book prototype.
+
+The physical field-book concept remains the core interaction, but the interface has been rebuilt with a restrained professional aesthetic: dark field-book cover, sage/charcoal controls, warm paper, subtle ruled lines, brass accent and monospaced field-note typography.
 
 ## Flow
-1. Launch
-2. Create New Job or Job Storage
-3. Open a job
-4. Full-screen digital field-book page
-5. Add basic field notes
+Launch → Create New Job / Job Storage → Open Job → Full field-book page.
 
-## Current scope
-- Mobile-first PWA
-- Local job storage
-- Job numbers
-- Full-page lined field-book view
-- Basic field notes
-- Minimal job details
-- Offline service worker
-
-The survey-specific field-book tools are intentionally not built yet. They will be designed from the field-book interface outward in later versions.
+Survey-specific tools remain intentionally minimal so they can be designed around the field-book surface in the next versions.
