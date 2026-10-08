@@ -1,125 +1,127 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#111827">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Field Book">
-  <title>Field Book — v0.0.1</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <style>
-    :root{--bg:#f3f5f7;--card:#fff;--ink:#17202a;--muted:#6b7280;--line:#dfe4e8;--accent:#1f7a5a;--accent2:#14543e;--danger:#b42318;--shadow:0 8px 24px rgba(16,24,40,.07)}
-    *{box-sizing:border-box} html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-    button,input,textarea,select{font:inherit} button{cursor:pointer}
-    .app{max-width:720px;margin:auto;min-height:100vh;padding-bottom:86px}
-    header{position:sticky;top:0;z-index:10;background:rgba(243,245,247,.94);backdrop-filter:blur(12px);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid var(--line)}
-    .head{display:flex;align-items:center;justify-content:space-between}.brand{font-weight:800;font-size:20px;letter-spacing:-.4px}.version{font-size:11px;color:var(--muted);margin-left:7px;font-weight:600}
-    .iconbtn{border:1px solid var(--line);background:var(--card);width:40px;height:40px;border-radius:12px;font-size:19px}
-    main{padding:16px}.view{display:none}.view.active{display:block}
-    h1{font-size:27px;margin:4px 0 5px;letter-spacing:-.7px}.sub{color:var(--muted);margin:0 0 18px;font-size:14px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow);margin-bottom:13px}
-    .hero{background:linear-gradient(135deg,#173c30,#1f7a5a);color:#fff;border:0}.hero .sub{color:#d8eee5}
-    .row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.grow{flex:1}
-    .btn{border:0;border-radius:12px;padding:11px 14px;font-weight:750;background:#eef2f3;color:var(--ink)}.btn.primary{background:var(--accent);color:#fff}.hero .btn{background:#fff;color:#173c30}.btn.danger{color:var(--danger);background:#fff1f0}.btn.small{padding:8px 10px;font-size:13px}
-    .field{margin-bottom:13px}.field label{display:block;font-size:12px;font-weight:750;color:var(--muted);margin-bottom:6px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;background:#fff;outline:none}.field textarea{min-height:100px;resize:vertical}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#f7f9fa;border-radius:13px;padding:12px}.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:var(--muted)}
-    .job{padding:14px;border:1px solid var(--line);border-radius:15px;background:#fff;margin-bottom:10px}.job h3{margin:0 0 3px;font-size:16px}.job p{margin:0;color:var(--muted);font-size:13px}.pill{font-size:10px;font-weight:800;padding:5px 8px;border-radius:99px;background:#e8f4ef;color:#176347}
-    .bookhead{background:#173c30;color:#fff;border-radius:17px 17px 0 0;padding:15px}.bookbody{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 17px 17px;overflow:hidden}
-    .bookline{display:grid;grid-template-columns:42px 1fr auto;gap:8px;padding:12px;border-bottom:1px dashed #cfd5d9;align-items:start}.bookline:last-child{border-bottom:0}.num{color:#8a9299;font-size:11px;padding-top:3px;text-align:right}.note{font-size:14px;line-height:1.35;white-space:pre-wrap}.time{font-size:10px;color:#9aa1a7}
-    .quickgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.quick{padding:13px 6px;border:1px solid var(--line);border-radius:13px;background:#fff;font-weight:750;font-size:12px}.quick span{display:block;font-size:18px;margin-bottom:4px}
-    .empty{text-align:center;color:var(--muted);padding:28px 10px}.search{margin-bottom:12px}.search input{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 13px}
-    .bottom{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:min(720px,100%);background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.nav{border:0;background:transparent;border-radius:12px;padding:8px;color:#7a8289;font-size:11px;font-weight:700}.nav.active{background:#e8f4ef;color:#176347}.nav .ni{display:block;font-size:20px;margin-bottom:2px}
-    .toast{position:fixed;z-index:50;left:50%;bottom:88px;transform:translateX(-50%) translateY(15px);background:#17202a;color:#fff;padding:10px 14px;border-radius:12px;font-size:13px;opacity:0;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    .modal{position:fixed;inset:0;background:rgba(10,15,20,.45);z-index:40;display:none;align-items:flex-end}.modal.show{display:flex}.sheet{background:#fff;width:100%;max-width:720px;margin:auto;border-radius:22px 22px 0 0;padding:18px;max-height:92vh;overflow:auto}.sheet h2{margin:0 0 16px;font-size:21px}
-    .sketch{width:100%;height:260px;border:1px solid var(--line);border-radius:13px;background:#fff;touch-action:none}.muted{color:var(--muted);font-size:12px}.divider{height:1px;background:var(--line);margin:14px 0}
-    @media(min-width:721px){.bottom{border-radius:16px 16px 0 0}.modal{align-items:center}.sheet{border-radius:22px;width:680px}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f0df">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Field Book">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg">
+<title>Field Book</title>
+<style>
+*{box-sizing:border-box}
+:root{--paper:#f7f2e3;--paper2:#eee7d2;--ink:#252525;--muted:#777266;--line:#c9c0aa;--blue:#274c77;--red:#a43d32}
+html,body{margin:0;height:100%;background:#d9d4c6;color:var(--ink);font-family:Georgia,"Times New Roman",serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{min-height:100%;display:flex;flex-direction:column}
+.screen{display:none;min-height:100vh}.screen.active{display:flex}
+#home{align-items:center;justify-content:center;padding:25px;background:#e1ddcf}
+.cover{width:min(470px,94vw);background:var(--paper);border:1px solid #bcb4a1;box-shadow:0 12px 35px #0002;padding:42px 28px}
+.cover:before{content:"";display:block;height:5px;background:var(--red);margin:-42px -28px 34px}
+.title{font-size:42px;letter-spacing:-1px;margin:0 0 5px}.subtitle{font-size:15px;color:var(--muted);margin:0 0 36px;font-style:italic}
+.cover-btn{display:block;width:100%;padding:17px 15px;margin:11px 0;background:transparent;border:1px solid #aaa18d;text-align:left;color:var(--ink);font-weight:bold}
+.cover-btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.cover-footer{margin-top:40px;font-size:11px;color:#928c7e;text-align:center;letter-spacing:1px;text-transform:uppercase}
+#jobs{background:#eeeae0;flex-direction:column}
+.jobs-head{padding:20px max(18px,calc((100% - 720px)/2));border-bottom:1px solid #c8c1b3;background:#e8e3d7}
+.jobs-head h1{margin:0;font-size:28px}.jobs-head p{margin:5px 0 0;color:var(--muted)}
+.jobs-body{width:min(720px,100%);margin:auto;padding:18px}
+.newjob{width:100%;padding:14px;background:var(--ink);color:var(--paper);border:0;font-weight:bold;margin-bottom:16px}
+.job{background:var(--paper);border:1px solid #c6bead;padding:15px;margin-bottom:9px;box-shadow:0 2px 4px #0001}
+.job strong{font-size:17px}.job small{display:block;color:var(--muted);margin-top:4px}.job button{margin-top:10px;border:1px solid #aaa18e;background:transparent;padding:8px 12px}
+.back{border:0;background:transparent;padding:0;margin-bottom:12px;color:var(--muted)}
+#book{background:#c8c2b4;flex-direction:column}
+.book-toolbar{height:52px;flex:none;background:#252525;color:#eee;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-family:Arial,sans-serif}
+.toolbtn{background:transparent;border:0;color:#fff;padding:9px 10px}.joblabel{font-size:13px;letter-spacing:.3px}.book-wrap{flex:1;display:flex;justify-content:center;overflow:auto;padding:0}
+.page{position:relative;width:min(900px,100%);min-height:calc(100vh - 52px);background:var(--paper);box-shadow:0 0 18px #0003;padding:30px 28px 80px 70px;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,#b8c4ca 32px,#b8c4ca 33px)}
+.page:before{content:"";position:absolute;left:48px;top:0;bottom:0;border-left:2px solid #c17a6e;opacity:.75}
+.book-meta{font-size:13px;margin-bottom:18px;line-height:1.45;position:relative}.book-meta strong{font-size:20px}
+.notes{position:relative}.note{min-height:33px;border-bottom:0;padding:5px 2px;display:flex;gap:12px;align-items:flex-start}.note-no{width:30px;text-align:right;color:#9a9181;font-size:11px;padding-top:3px}.note-text{font-size:16px;line-height:23px;white-space:pre-wrap}.note-type{font:10px Arial,sans-serif;color:#8d877c;margin-left:auto;padding-top:4px}
+.empty-note{color:#aaa18f;font-style:italic;padding:20px 0}
+.addbar{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);width:min(540px,calc(100% - 30px));display:flex;gap:8px;z-index:5}
+.addbar button{flex:1;padding:13px;border:1px solid #777064;background:#292929;color:#fff;box-shadow:0 4px 10px #0003}
+.modal{display:none;position:fixed;inset:0;background:#0007;z-index:20;align-items:center;justify-content:center;padding:15px;font-family:Arial,sans-serif}.modal.show{display:flex}
+.dialog{width:min(480px,100%);background:var(--paper);padding:22px;box-shadow:0 12px 35px #0006}.dialog h2{margin:0 0 18px;font-family:Georgia,serif}.field{margin:12px 0}.field label{display:block;font-size:11px;font-weight:bold;color:var(--muted);margin-bottom:5px}.field input{width:100%;padding:11px;border:1px solid #aaa18d;background:#fffdf7}.actions{display:flex;gap:8px;margin-top:20px}.actions button{flex:1;padding:12px;border:1px solid #aaa18d;background:transparent}.actions .save{background:var(--ink);color:#fff;border-color:var(--ink)}
+@media(max-width:600px){.page{padding-left:55px;padding-right:16px}.page:before{left:37px}.book-toolbar{height:48px}.page{min-height:calc(100vh - 48px)}.title{font-size:37px}}
+</style>
 </head>
 <body>
 <div class="app">
-<header><div class="head"><div><span class="brand">📓 Field Book</span><span class="version">v0.0.1</span></div><button class="iconbtn" onclick="showSettings()">⚙️</button></div></header>
-<main>
-<section id="home" class="view active">
-  <h1>Field work, simplified.</h1><p class="sub">A digital survey field book prototype — built mobile-first.</p>
-  <div class="card hero"><div class="row between"><div><div style="font-size:12px;opacity:.8">CURRENT JOB</div><strong id="heroJob">No active job</strong></div><button class="btn" onclick="openNewJob()">＋ New Job</button></div><div class="grid" style="margin-top:16px"><div class="stat" style="background:rgba(255,255,255,.12)"><b id="jobCount">0</b><span style="color:#d8eee5">Saved jobs</span></div><div class="stat" style="background:rgba(255,255,255,.12)"><b id="noteCount">0</b><span style="color:#d8eee5">Field notes</span></div></div></div>
-  <div class="card"><div class="row between"><strong>Recent jobs</strong><button class="btn small" onclick="nav('jobs')">View all</button></div><div id="recentJobs" style="margin-top:12px"></div></div>
-</section>
-
-<section id="jobs" class="view">
-  <h1>Jobs</h1><p class="sub">Your local field-book jobs.</p>
-  <div class="search"><input id="jobSearch" placeholder="Search job number, name or site…" oninput="renderJobs()"></div>
-  <button class="btn primary" style="width:100%;margin-bottom:12px" onclick="openNewJob()">＋ Create New Job</button>
-  <div id="jobList"></div>
-</section>
-
-<section id="book" class="view">
-  <div id="bookEmpty" class="card empty"><div style="font-size:38px">📓</div><strong>No active job</strong><p>Create or open a job to start your field book.</p><button class="btn primary" onclick="openNewJob()">＋ New Job</button></div>
-  <div id="bookActive" style="display:none">
-    <div class="row between" style="margin-bottom:12px"><div><h1 id="bookTitle" style="font-size:22px;margin:0"></h1><p class="sub" id="bookMeta" style="margin:2px 0 0"></p></div><button class="btn small" onclick="showJobDetails()">Details</button></div>
-    <div class="card" style="padding:0;overflow:hidden"><div class="bookhead"><div class="row between"><strong>FIELD NOTES</strong><span id="bookDate" style="font-size:11px;opacity:.8"></span></div></div><div class="bookbody" id="notes"></div></div>
-    <div class="card"><strong>Quick entry</strong><div class="quickgrid">
-      <button class="quick" onclick="quickNote('STATION')"><span>📍</span>Station</button>
-      <button class="quick" onclick="quickNote('BOUNDARY')"><span>▱</span>Boundary</button>
-      <button class="quick" onclick="quickNote('TREE')"><span>🌳</span>Tree</button>
-      <button class="quick" onclick="quickNote('FENCE')"><span>▤</span>Fence</button>
-      <button class="quick" onclick="quickNote('PEG')"><span>📌</span>Peg</button>
-      <button class="quick" onclick="quickNote('NOTE')"><span>✎</span>Note</button>
-      <button class="quick" onclick="addPhotoNote()"><span>📷</span>Photo</button>
-      <button class="quick" onclick="openSketch()"><span>✏️</span>Sketch</button>
-      <button class="quick" onclick="quickNote('RL')"><span>↕</span>RL</button>
-    </div></div>
-    <button class="btn primary" style="width:100%" onclick="openNote()">＋ Add Field Note</button>
+<section id="home" class="screen active">
+  <div class="cover">
+    <h1 class="title">Field Book</h1>
+    <p class="subtitle">Digital field notes for survey work</p>
+    <button class="cover-btn primary" onclick="newJob()">＋ Create New Job</button>
+    <button class="cover-btn" onclick="showJobs()">▣ Job Storage</button>
+    <div class="cover-footer">Prototype v0.0.2</div>
   </div>
 </section>
-</main>
-<nav class="bottom"><button class="nav active" data-view="home" onclick="nav('home')"><span class="ni">⌂</span>Home</button><button class="nav" data-view="jobs" onclick="nav('jobs')"><span class="ni">▣</span>Jobs</button><button class="nav" data-view="book" onclick="nav('book')"><span class="ni">📓</span>Field Book</button></nav>
+
+<section id="jobs" class="screen">
+  <div class="jobs-head">
+    <button class="back" onclick="home()">← Back</button>
+    <h1>Job Storage</h1><p>Open an existing field book or start a new job.</p>
+  </div>
+  <div class="jobs-body">
+    <button class="newjob" onclick="newJob()">＋ CREATE NEW JOB</button>
+    <div id="jobList"></div>
+  </div>
+</section>
+
+<section id="book" class="screen">
+  <div class="book-toolbar">
+    <button class="toolbtn" onclick="showJobs()">☰ Jobs</button>
+    <span class="joblabel" id="toolbarJob"></span>
+    <button class="toolbtn" onclick="jobDetails()">Info</button>
+  </div>
+  <div class="book-wrap">
+    <main class="page">
+      <div class="book-meta" id="bookMeta"></div>
+      <div class="notes" id="notes"></div>
+    </main>
+  </div>
+  <div class="addbar">
+    <button onclick="addNote()">＋ Field Note</button>
+  </div>
+</section>
 </div>
 
-<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div><div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="dialog" id="dialog"></div></div>
 
 <script>
-const KEY='fieldBook.v001';
-let db=JSON.parse(localStorage.getItem(KEY)||'{"jobs":[],"activeJobId":null}');
-const save=()=>{localStorage.setItem(KEY,JSON.stringify(db));renderAll()};
-const id=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
-const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
-function nav(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(v).classList.add('active');document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.view===v));if(v==='jobs')renderJobs();if(v==='book')renderBook()}
-function active(){return db.jobs.find(j=>j.id===db.activeJobId)}
-function openNewJob(){
-  sheet.innerHTML=`<h2>Create New Job</h2><div class="field"><label>JOB NUMBER</label><input id="fNum" value="${nextJob()}"></div><div class="field"><label>JOB NAME</label><input id="fName" placeholder="e.g. Boundary Survey"></div><div class="field"><label>SITE / ADDRESS</label><input id="fSite" placeholder="Site address"></div><div class="field"><label>CLIENT</label><input id="fClient" placeholder="Optional"></div><div class="field"><label>SURVEYOR</label><input id="fSurveyor" placeholder="Optional"></div><div class="row"><button class="btn grow" onclick="closeModal()">Cancel</button><button class="btn primary grow" onclick="createJob()">Create Job</button></div>`;openModal()
+const KEY='fieldBook.v002';
+let db=JSON.parse(localStorage.getItem(KEY)||'{"jobs":[],"active":null}');
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}
+function screen(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function home(){screen('home')}
+function showJobs(){renderJobs();screen('jobs')}
+function nextJob(){let nums=db.jobs.map(j=>parseInt(String(j.number).split('-').pop())).filter(Number.isFinite);return '26-'+String((Math.max(0,...nums)+1)).padStart(4,'0')}
+function newJob(){
+ dialog.innerHTML=`<h2>New Job</h2>
+ <div class="field"><label>JOB NUMBER</label><input id="jn" value="${nextJob()}"></div>
+ <div class="field"><label>JOB NAME</label><input id="jname" placeholder="e.g. Boundary Survey"></div>
+ <div class="field"><label>SITE / ADDRESS</label><input id="jsite" placeholder="Optional"></div>
+ <div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="createJob()">Create Job</button></div>`;
+ openModal()
 }
-function nextJob(){let y=new Date().getFullYear().toString().slice(-2), nums=db.jobs.map(j=>parseInt(String(j.number).split('-').pop(),10)).filter(Number.isFinite);return `${y}-${String((Math.max(0,...nums)+1)).padStart(4,'0')}`}
-function createJob(){let j={id:id(),number:document.getElementById('fNum').value.trim()||nextJob(),name:document.getElementById('fName').value.trim()||'Untitled Survey',site:document.getElementById('fSite').value.trim(),client:document.getElementById('fClient').value.trim(),surveyor:document.getElementById('fSurveyor').value.trim(),created:new Date().toISOString(),updated:new Date().toISOString(),notes:[]};db.jobs.unshift(j);db.activeJobId=j.id;save();closeModal();nav('book');toast('Job created')}
-function openJob(jobId){db.activeJobId=jobId;save();nav('book')}
-function renderAll(){renderHome();renderJobs();renderBook()}
-function renderHome(){document.getElementById('jobCount').textContent=db.jobs.length;document.getElementById('noteCount').textContent=db.jobs.reduce((n,j)=>n+j.notes.length,0);let a=active();document.getElementById('heroJob').textContent=a?a.number+' — '+a.name:'No active job';let r=document.getElementById('recentJobs');r.innerHTML=db.jobs.slice(0,3).map(jobCard).join('')||'<div class="empty">No jobs yet.</div>'}
-function jobCard(j){return `<div class="job" onclick="openJob('${j.id}')"><div class="row between"><div><h3>${esc(j.number)} — ${esc(j.name)}</h3><p>${esc(j.site||'No site entered')} · ${j.notes.length} note${j.notes.length===1?'':'s'}</p></div><span class="pill">${j.id===db.activeJobId?'ACTIVE':'OPEN'}</span></div></div>`}
-function renderJobs(){let q=(document.getElementById('jobSearch')?.value||'').toLowerCase();let list=db.jobs.filter(j=>(j.number+' '+j.name+' '+j.site).toLowerCase().includes(q));document.getElementById('jobList').innerHTML=list.map(jobCard).join('')||'<div class="card empty">No matching jobs.</div>'}
-function renderBook(){let a=active(),empty=document.getElementById('bookEmpty'),act=document.getElementById('bookActive');if(!a){empty.style.display='block';act.style.display='none';return}empty.style.display='none';act.style.display='block';document.getElementById('bookTitle').textContent=a.number+' — '+a.name;document.getElementById('bookMeta').textContent=a.site||'No site entered';document.getElementById('bookDate').textContent=new Date().toLocaleDateString('en-AU');let notes=document.getElementById('notes');notes.innerHTML=a.notes.map((n,i)=>`<div class="bookline"><div class="num">${String(i+1).padStart(2,'0')}</div><div><div class="note">${esc(n.text)}</div><div class="time">${esc(n.type||'NOTE')} · ${new Date(n.time).toLocaleTimeString('en-AU',{hour:'2-digit',minute:'2-digit'})}</div></div><button class="btn small danger" onclick="deleteNote('${n.id}')">×</button></div>`).join('')||'<div class="empty">No field notes yet.<br>Use a quick-entry button below.</div>'}
-function openNote(prefill='',type='NOTE'){sheet.innerHTML=`<h2>Add Field Note</h2><div class="field"><label>NOTE TYPE</label><select id="nType"><option ${type==='NOTE'?'selected':''}>NOTE</option><option ${type==='STATION'?'selected':''}>STATION</option><option ${type==='BOUNDARY'?'selected':''}>BOUNDARY</option><option ${type==='TREE'?'selected':''}>TREE</option><option ${type==='FENCE'?'selected':''}>FENCE</option><option ${type==='PEG'?'selected':''}>PEG</option><option ${type==='RL'?'selected':''}>RL</option><option>OTHER</option></select></div><div class="field"><label>FIELD NOTE</label><textarea id="nText" autofocus placeholder="Enter observation, measurement or note…">${esc(prefill)}</textarea></div><div class="row"><button class="btn grow" onclick="closeModal()">Cancel</button><button class="btn primary grow" onclick="saveNote()">Add Note</button></div>`;openModal();setTimeout(()=>document.getElementById('nText')?.focus(),50)}
-function saveNote(){let a=active();if(!a)return;let t=document.getElementById('nText').value.trim();if(!t){toast('Enter a note first');return}a.notes.push({id:id(),type:document.getElementById('nType').value,text:t,time:new Date().toISOString()});a.updated=new Date().toISOString();save();closeModal();toast('Field note added')}
-function quickNote(type){let prompts={STATION:'Station: ',BOUNDARY:'Boundary: ',TREE:'Tree: ',FENCE:'Fence: ',PEG:'Peg: ',RL:'RL: '};openNote(prompts[type]||'',type)}
-function addPhotoNote(){openNote('PHOTO — Add photo reference / description: ','NOTE')}
-function deleteNote(nid){let a=active();a.notes=a.notes.filter(n=>n.id!==nid);a.updated=new Date().toISOString();save();toast('Note deleted')}
-function showJobDetails(){let a=active();sheet.innerHTML=`<h2>${esc(a.number)}</h2><div class="field"><label>JOB NAME</label><input id="dName" value="${esc(a.name)}"></div><div class="field"><label>SITE</label><input id="dSite" value="${esc(a.site)}"></div><div class="field"><label>CLIENT</label><input id="dClient" value="${esc(a.client)}"></div><div class="field"><label>SURVEYOR</label><input id="dSurveyor" value="${esc(a.surveyor)}"></div><div class="row"><button class="btn danger" onclick="deleteJob()">Delete</button><button class="btn primary grow" onclick="saveDetails()">Save</button></div>`;openModal()}
-function saveDetails(){let a=active();a.name=document.getElementById('dName').value.trim()||'Untitled Survey';a.site=document.getElementById('dSite').value.trim();a.client=document.getElementById('dClient').value.trim();a.surveyor=document.getElementById('dSurveyor').value.trim();a.updated=new Date().toISOString();save();closeModal();toast('Job updated')}
-function deleteJob(){let a=active();if(!confirm(`Delete ${a.number}? This cannot be undone.`))return;db.jobs=db.jobs.filter(j=>j.id!==a.id);db.activeJobId=db.jobs[0]?.id||null;save();closeModal();nav('jobs');toast('Job deleted')}
-function openSketch(){sheet.innerHTML=`<h2>Field Sketch</h2><p class="muted">Prototype sketch pad. Draw with your finger or mouse.</p><canvas id="sketch" class="sketch"></canvas><div class="row" style="margin-top:12px"><button class="btn" onclick="clearSketch()">Clear</button><button class="btn primary grow" onclick="saveSketch()">Save Sketch</button></div>`;openModal();setTimeout(initCanvas,50)}
-let ctx,drawing=false;
-function initCanvas(){let c=document.getElementById('sketch');c.width=c.clientWidth*devicePixelRatio;c.height=c.clientHeight*devicePixelRatio;ctx=c.getContext('2d');ctx.scale(devicePixelRatio,devicePixelRatio);ctx.lineWidth=2;ctx.lineCap='round';let p=e=>{let r=c.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};c.onpointerdown=e=>{drawing=true;let q=p(e);ctx.beginPath();ctx.moveTo(q.x,q.y)};c.onpointermove=e=>{if(!drawing)return;let q=p(e);ctx.lineTo(q.x,q.y);ctx.stroke()};c.onpointerup=()=>drawing=false;c.onpointerleave=()=>drawing=false}
-function clearSketch(){let c=document.getElementById('sketch');ctx.clearRect(0,0,c.clientWidth,c.clientHeight)}
-function saveSketch(){let c=document.getElementById('sketch'),data=c.toDataURL();let a=active();a.notes.push({id:id(),type:'SKETCH',text:'Field sketch saved locally.',image:data,time:new Date().toISOString()});a.updated=new Date().toISOString();save();closeModal();toast('Sketch saved')}
-function showSettings(){sheet.innerHTML=`<h2>Field Book</h2><div class="card" style="box-shadow:none;background:#f7f9fa"><strong>Prototype v0.0.1</strong><p class="muted">Offline-first local prototype. Data is stored in this browser/device only.</p></div><div class="divider"></div><button class="btn" style="width:100%;margin-bottom:8px" onclick="exportData()">Export Job Data (JSON)</button><button class="btn danger" style="width:100%" onclick="resetData()">Reset Local Data</button>`;openModal()}
-function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='field-book-backup.json';a.click();URL.revokeObjectURL(a.href);toast('Backup exported')}
-function resetData(){if(confirm('Delete all local Field Book data?')){localStorage.removeItem(KEY);location.reload()}}
-function openModal(){document.getElementById('modal').classList.add('show')}
-function closeModal(){document.getElementById('modal').classList.remove('show')}
-document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
-if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
-renderAll();
+function createJob(){let j={id:uid(),number:jn.value.trim()||nextJob(),name:jname.value.trim()||'Untitled Survey',site:jsite.value.trim(),created:new Date().toISOString(),notes:[]};db.jobs.unshift(j);db.active=j.id;save();closeModal();openBook()}
+function renderJobs(){jobList.innerHTML=db.jobs.map(j=>`<div class="job"><strong>${esc(j.number)} — ${esc(j.name)}</strong><small>${esc(j.site||'No site entered')} · ${j.notes.length} field note${j.notes.length===1?'':'s'}</small><button onclick="openBook('${j.id}')">Open Field Book →</button></div>`).join('')||'<div style="padding:30px;text-align:center;color:#777">No jobs stored yet.</div>'}
+function openBook(id){if(id)db.active=id;save();renderBook();screen('book')}
+function active(){return db.jobs.find(j=>j.id===db.active)}
+function renderBook(){let j=active();if(!j)return home();toolbarJob.textContent=j.number;bookMeta.innerHTML=`<strong>${esc(j.name)}</strong><br>${esc(j.site||'No site entered')}<br><span style="color:#777">${new Date(j.created).toLocaleDateString('en-AU')}</span>`;notes.innerHTML=j.notes.map((n,i)=>`<div class="note"><span class="note-no">${String(i+1).padStart(2,'0')}</span><span class="note-text">${esc(n.text)}</span><span class="note-type">${esc(n.type)}</span></div>`).join('')||'<div class="empty-note">Field notes will appear here…</div>'}
+function addNote(){dialog.innerHTML=`<h2>Field Note</h2><div class="field"><label>NOTE</label><input id="nt" autofocus placeholder="Enter field observation…"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveNote()">Add Note</button></div>`;openModal();setTimeout(()=>nt.focus(),50)}
+function saveNote(){let j=active(),v=nt.value.trim();if(!v)return; j.notes.push({id:uid(),text:v,type:'NOTE',time:new Date().toISOString()});save();closeModal();renderBook()}
+function jobDetails(){let j=active();dialog.innerHTML=`<h2>${esc(j.number)}</h2><div class="field"><label>JOB NAME</label><input id="dn" value="${esc(j.name)}"></div><div class="field"><label>SITE</label><input id="ds" value="${esc(j.site)}"></div><div class="actions"><button onclick="closeModal()">Cancel</button><button class="save" onclick="saveDetails()">Save</button></div>`;openModal()}
+function saveDetails(){let j=active();j.name=dn.value.trim()||'Untitled Survey';j.site=ds.value.trim();save();closeModal();renderBook()}
+function openModal(){modal.classList.add('show')};function closeModal(){modal.classList.remove('show')}
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+modal.addEventListener('click',e=>{if(e.target===modal)closeModal()})
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+renderJobs();
 </script>
-</body></html>
+</body>
+</html>

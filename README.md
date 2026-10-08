@@ -1,28 +1,21 @@
-# Field Book — v0.0.1
+# Field Book v0.0.2
 
-A mobile-first, offline-first digital survey field book prototype.
+Prototype deliberately redesigned from scratch around the physical survey field-book concept.
 
-## Current prototype
+## Flow
+1. Launch
+2. Create New Job or Job Storage
+3. Open a job
+4. Full-screen digital field-book page
+5. Add basic field notes
 
-- PWA / installable web app
-- Mobile-first UI
-- Jobs and job numbers
-- Local job storage using browser localStorage
-- Active job / field book
-- Quick-entry field note buttons
-- Station, boundary, tree, fence, peg and RL note types
-- Field sketch pad
-- Local JSON backup/export
+## Current scope
+- Mobile-first PWA
+- Local job storage
+- Job numbers
+- Full-page lined field-book view
+- Basic field notes
+- Minimal job details
 - Offline service worker
-- Basic app manifest and icon
-- No cloud account or server required yet
 
-## GitHub Pages
-
-Upload the contents of this folder to a GitHub repository and enable GitHub Pages.
-
-For testing, open the GitHub Pages URL on the phone and use the browser's "Add to Home Screen" option.
-
-## Important
-
-This is v0.0.1. Data is currently stored locally on the device/browser. Cloud sync, authentication, structured survey observations, PC/server syncing and conflict handling are intentionally reserved for later versions.
+The survey-specific field-book tools are intentionally not built yet. They will be designed from the field-book interface outward in later versions.
