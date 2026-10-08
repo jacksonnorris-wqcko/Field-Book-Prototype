@@ -1,23 +1,18 @@
-# Field Book v0.0.12
+# Field Book v0.0.13
 
-Logo correction only.
+Field workspace polish release.
 
-The logo is redrawn cleanly from the supplied Field Book v0.0.10 reference:
-- dark rounded-square tile
-- small white angular zig-zag mark
-- no border
-- no screenshot crop
-- the same vector geometry is used inside the app
-- the same geometry is rendered into the single PWA/Home Screen PNG
-
-No other UI or field-book functionality was intentionally changed.
-
-Files:
-- index.html
-- manifest.json
-- sw.js
-- field-book-logo-v012.png
-- README.md
+Changes:
+- iPhone safe-area handling added to the top job bar so the Jobs / Info controls no longer collide with the status area.
+- Tools panel polished.
+- No drawing tool is selected by default when the field book opens.
+- Line tool is now a tap-to-build polyline:
+  1. tap A
+  2. tap B to create A-B
+  3. tap C to create B-C
+  4. continue tapping points
+  5. Finish line when complete
+- Eraser now checks line segments more accurately.
+- Existing jobs and drawings remain stored using the existing local storage key.
 
 Replace the complete GitHub Pages repository with these files.
-Delete the existing Field Book Home Screen shortcut and add it again from Safari after the new version is published.
